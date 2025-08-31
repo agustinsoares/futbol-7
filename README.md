@@ -24,8 +24,8 @@
   <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
   <img alt="Status" src="https://img.shields.io/badge/status-WIP-yellow">
   <!-- Optional build status placeholder; replace 'yourusername' once CI is set up -->
-  <a href="https://github.com/yourusername/ligaf7/actions">
-    <img alt="CI" src="https://github.com/yourusername/ligaf7/workflows/CI/badge.svg">
+  <a href="https://github.com/agustinsoares/ligaf7/actions">
+    <img alt="CI" src="https://github.com/agustinsoares/ligaf7/workflows/CI/badge.svg">
   </a>
 </p>
 
@@ -155,7 +155,7 @@ MIT License – free to use and adapt.
 ---
 
 ## 👤 Author
-**Your Name**  
-- LinkedIn: https://linkedin.com/in/yourprofile  
-- Portfolio: https://yourportfolio.com  
-- GitHub: https://github.com/yourusername
+**Agustín M. Soares**  
+- LinkedIn: https://www.linkedin.com/in/agustinsoares
+- Portfolio: https://agustinsoares.github.io/
+- GitHub: https://github.com/agustinsoares
