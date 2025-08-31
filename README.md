@@ -24,9 +24,9 @@
   <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
   <img alt="Status" src="https://img.shields.io/badge/status-WIP-yellow">
   <!-- Optional build status placeholder; replace 'yourusername' once CI is set up -->
-  <a href="https://github.com/agustinsoares/ligaf7/actions">
+  <!--<a href="https://github.com/agustinsoares/ligaf7/actions">
     <img alt="CI" src="https://github.com/agustinsoares/ligaf7/workflows/CI/badge.svg">
-  </a>
+  </a>-->
 </p>
 
 ## 📌 Overview
