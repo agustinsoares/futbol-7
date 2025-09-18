@@ -1,0 +1,23 @@
+{
+  "name": "futbol-7",
+  "version": "1.0.0",
+  "description": "## 📌 Overview LigaF7 is a full-stack web application for managing amateur 7-a-side football leagues...",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "postinstall": "prisma generate || echo \"(skip prisma)\"",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "prisma": "^6.16.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

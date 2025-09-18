@@ -1,0 +1,30 @@
+// --- DATASOURCE (DB) ---
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- GENERATOR (CLIENTE PRISMA) ---
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --- MODELOS ---
+model Liga {
+  id        BigInt   @id @default(autoincrement())
+  nombre    String
+  formato   String // "5v5" | "7v7"
+  genero    String // "M" | "F" | "X"
+  equipos   Equipo[]
+  createdAt DateTime @default(now())
+}
+
+model Equipo {
+  id        BigInt   @id @default(autoincrement())
+  nombre    String
+  ligaId    BigInt
+  liga      Liga     @relation(fields: [ligaId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([ligaId, nombre])
+}
