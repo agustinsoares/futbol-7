@@ -1,17 +1,6 @@
 
 # LigaF7 – Amateur Football League Management Platform
 
-<p align="center">
-  <!-- Project meta badges -->
-  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green">
-  <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
-  <img alt="Status" src="https://img.shields.io/badge/status-WIP-yellow">
-  <!-- Optional build status placeholder; replace 'yourusername' once CI is set up -->
-  <!--<a href="https://github.com/agustinsoares/ligaf7/actions">
-    <img alt="CI" src="https://github.com/agustinsoares/ligaf7/workflows/CI/badge.svg">
-  </a>-->
-</p>
-
 ## 📌 Overview
 LigaF7 is a full‑stack web application for managing amateur 7‑a‑side football leagues.  
 It allows organizers to create tournaments, register teams, schedule matches, track results, generate standings, and manage payments.
