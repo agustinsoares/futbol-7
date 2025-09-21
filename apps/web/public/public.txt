@@ -1,0 +1,3 @@
+estáticos servidos por Next.js
+
+incluimos fuentes, imagenes, logo, iconos
