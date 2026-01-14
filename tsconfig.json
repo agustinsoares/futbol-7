@@ -7,10 +7,10 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "verbatimModuleSyntax": false,
-    "ignoreDeprecations": "6.0"
+    "verbatimModuleSyntax": false
   },
   "include": [
-    "src"
-, "apps/api/src/index.ts"  ]
+    "src",
+    "apps/api/src/index.ts"
+  ]
 }

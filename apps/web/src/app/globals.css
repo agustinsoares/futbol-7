@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --font-albert: 'Albert Sans', sans-serif;
+        --font-nova: 'Nova Square', sans-serif;
+    }
+}
+
+body {
+    @apply font-albert;
+}
+
+h1,
+h2,
+h3 {
+    @apply font-nova;
+}
