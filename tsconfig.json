@@ -10,7 +10,6 @@
     "verbatimModuleSyntax": false
   },
   "include": [
-    "src",
-    "apps/api/src/index.ts"
+    "apps/api/src"
   ]
 }

@@ -5,7 +5,8 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "npm run dev --prefix apps/web",
+    "dev:api": "ts-node apps/api/src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "postinstall": "prisma generate || echo \"(skip prisma)\"",
