@@ -1,11 +1,10 @@
 export const SITE_NAME = 'Aalto Football';
 
-export const SITE_DESCRIPTION =
-    'Encuentra partidos de fútbol cerca de ti o crea el tuyo y completa el equipo en minutos.';
+// Bergen: fechas y horas siempre en hora de Noruega, precios en coronas.
+export const TIME_ZONE = 'Europe/Oslo';
+export const CURRENCY = 'NOK';
 
-// Locale y zona horaria en las que se muestran fechas y horas de los partidos.
-export const LOCALE = 'es-ES';
-export const TIME_ZONE = 'Europe/Madrid';
+export const BRAND_BLUE = '#2979ff';
 
 export function siteUrl(): URL {
     const explicit = process.env.NEXT_PUBLIC_SITE_URL;

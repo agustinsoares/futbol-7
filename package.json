@@ -1,23 +1,11 @@
 {
   "name": "aalto-football",
-  "version": "1.0.0",
-  "description": "Aalto Football: plataforma para crear partidos de fútbol y sumarse a ellos.",
-  "type": "commonjs",
+  "private": true,
+  "description": "Aalto Football: pick-up football matches in Bergen. Hosts create matches, players join.",
   "scripts": {
     "dev": "npm run dev --prefix apps/web",
     "build": "npm run build --prefix apps/web",
-    "typecheck": "npm run typecheck --prefix apps/web",
-    "dev:api": "ts-node apps/api/src/index.ts",
-    "postinstall": "prisma generate || echo \"(skip prisma)\""
-  },
-  "dependencies": {
-    "@prisma/client": "^6.16.2"
-  },
-  "devDependencies": {
-    "@types/node": "^24.5.2",
-    "prisma": "^6.16.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
-  },
-  "private": true
+    "lint": "npm run lint --prefix apps/web",
+    "typecheck": "npm run typecheck --prefix apps/web"
+  }
 }

@@ -1,85 +1,108 @@
 # ⚽ Aalto Football
 
-Aalto Football es una plataforma web para organizar partidos de fútbol amateur.
-Los **hosts** crean partidos (cancha, hora, formato, nivel y plazas) y los **jugadores** los encuentran y se suman.
-Es la idea de Playtomic, aplicada al fútbol 5, 7 y 11.
+Aalto Football is a web app for pick-up football in **Bergen, Norway**.
+**Hosts** create matches (pitch, time, format, level and spots) and **players** find them and join.
+Think Playtomic, but for 5-, 7-, 9- and 11-a-side football.
 
-> Estado: en desarrollo. Por ahora solo existe la landing pública. Las cuentas de usuario, la creación de partidos y el buscador son los próximos pasos (ver [Roadmap](#-roadmap)).
+The site is in **English** by default, with **Norwegian (bokmål)** available through the language switcher.
+It can be installed on a phone's home screen as a **PWA**.
+
+> Status: in development. The public landing page, the database schema and the sample data are ready.
+> Accounts, match creation and search are next (see [Roadmap](#-roadmap)). Online payments are disabled for now.
 
 ---
 
 ## 🛠️ Stack
 
-- **Web:** Next.js 16 (App Router), React 19, TypeScript y Tailwind CSS 4, en `apps/web`
-- **Base de datos:** PostgreSQL con Prisma, en `prisma/`
+- **Web:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, in `apps/web`
+- **Backend:** Supabase (Postgres + Auth + RLS), with migrations in `supabase/`
 - **Deploy:** Vercel
+- **CI:** GitHub Actions (lint, types, format, build, and migrations against a real Postgres)
 
-## 📂 Estructura
+## 📂 Structure
 
 ```
 .
-├─ apps/
-│  ├─ web/                 # Aplicación Next.js (la que se despliega en Vercel)
-│  │  ├─ public/images/    # Imágenes estáticas (optimizadas, WebP)
-│  │  └─ src/
-│  │     ├─ app/           # Rutas, layout, metadatos, favicon, imagen OG
-│  │     ├─ components/    # Header, Footer, MatchCard, iconos…
-│  │     ├─ fonts/         # Albert Sans y Nova Square (next/font/local)
-│  │     └─ lib/           # Configuración del sitio y formateo de fechas/precios
-│  └─ api/                 # Script de prueba de conexión a la base de datos
-├─ prisma/                 # Esquema y migraciones
-└─ docs/                   # Guía de marca
+├─ apps/web/                  # Next.js app (deployed to Vercel)
+│  ├─ public/                 # Hero image, PWA icons, service worker (sw.js)
+│  └─ src/
+│     ├─ app/[lang]/          # Localised routes: /en/… and /nb/…
+│     ├─ app/manifest.ts      # PWA manifest
+│     ├─ components/          # Header, Footer, MatchCard, LanguageSwitcher…
+│     ├─ i18n/                # Language config and dictionaries (en, nb)
+│     ├─ lib/supabase/        # Supabase clients and database types
+│     └─ proxy.ts             # Redirects / to /en or /nb (cookie, then browser language)
+├─ supabase/
+│  ├─ migrations/             # Schema, RLS policies, join/leave functions
+│  ├─ seed.sql                # Bergen sample data (users, pitches, matches)
+│  └─ tests/                  # Local Supabase stub + RLS tests
+└─ docs/                      # Brand guide
 ```
 
-## ⚙️ Desarrollo local
+## ⚙️ Local development
 
-Requisitos: Node.js 20 o superior.
+Requirements: Node.js 20+.
 
 ```bash
 git clone https://github.com/agustinsoares/futbol-7.git
-cd futbol-7
-cp .env.example .env
-
-npm install                        # dependencias de la raíz (Prisma)
-npm install --prefix apps/web      # dependencias de la web
-
+cd futbol-7/apps/web
+cp ../../.env.example .env.local   # fill in the Supabase values
+npm install
 npm run dev                        # http://localhost:3000
 ```
 
-Otros comandos:
+Without Supabase variables the site still runs and shows sample matches.
+
+Useful commands (from `apps/web`):
 
 ```bash
-npm run build        # build de producción de la web
-npm run typecheck    # chequeo de tipos
-npx prisma validate  # valida el esquema de la base de datos
+npm run lint          # ESLint
+npm run typecheck     # TypeScript
+npm run format        # Prettier
+npm run build         # production build
 ```
 
-## 🚀 Deploy en Vercel
+## 🗄️ Database (Supabase)
 
-En la configuración del proyecto en Vercel, el **Root Directory** debe ser `apps/web`.
-Los metadatos usan `VERCEL_PROJECT_PRODUCTION_URL` automáticamente. Si usas un dominio propio, define `NEXT_PUBLIC_SITE_URL`.
+1. Apply the migrations in `supabase/migrations/` in order (SQL editor or `supabase db push`).
+2. Optionally run `supabase/seed.sql` for Bergen sample data. It creates `admin@aaltofootball.test` (admin),
+   `player@aaltofootball.test` (regular user) and 20 more players, 7 pitches and 12 matches.
+   Users get a random password: set one from **Authentication → Users** to log in with them.
+3. Copy the project URL and publishable key into `.env.local` and into Vercel's environment variables.
+
+Security model:
+
+- Everyone can read public matches, pitches and profiles. Private matches are only visible to the host, players in them and admins.
+- Only admins manage pitches and change roles.
+- Joining and leaving happen only through `join_match` / `leave_match`, which lock the match row so the last spot can't be taken twice, and move the first waitlisted player up when someone drops out.
+
+## 🚀 Deploy on Vercel
+
+- **Root Directory:** `apps/web`
+- **Environment variables:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (and `NEXT_PUBLIC_SITE_URL` if you use a custom domain)
 
 ## 🗺️ Roadmap
 
-- [x] Landing pública con la marca Aalto Football
-- [ ] Cuentas de usuario (Google y enlace mágico por email)
-- [ ] Modelo de datos: usuarios, canchas, partidos y jugadores apuntados
-- [ ] Crear, editar y cancelar partidos (host)
-- [ ] Buscador de partidos con filtros y mapa
-- [ ] Sumarse y bajarse de un partido, con lista de espera automática
-- [ ] Compartir partido por WhatsApp y partidos privados
-- [ ] Recordatorios y exportar al calendario
-- [ ] Equipos balanceados, resultados, valoraciones y nivel de jugador
-- [ ] Pagos online (desactivado por ahora)
+- [x] Landing page (English + Norwegian bokmål)
+- [x] Installable PWA with offline page
+- [x] Database schema, security rules and Bergen sample data
+- [ ] Sign in (Google and email magic link) and profile onboarding
+- [ ] Create, edit and cancel matches (hosts)
+- [ ] Match search with filters and map
+- [ ] Match page: join and leave, with waitlist
+- [ ] Share links and private matches by invite
+- [ ] Reminders and calendar export
+- [ ] Balanced teams, results, ratings and player level
+- [ ] Online payments (disabled for now)
 
-## 🎨 Marca
+## 🎨 Brand
 
-Colores, tipografías y tono en [`docs/football_league_branding.md`](docs/football_league_branding.md).
+Colours, typography and tone: [`docs/football_league_branding.md`](docs/football_league_branding.md).
 
-## 📄 Licencia
+## 📄 License
 
 MIT.
 
-## 👤 Autor
+## 👤 Author
 
 **Agustín M. Soares**: [LinkedIn](https://www.linkedin.com/in/agustinsoares) · [Portfolio](https://agustinsoares.github.io/) · [GitHub](https://github.com/agustinsoares)
