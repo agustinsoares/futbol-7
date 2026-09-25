@@ -7,8 +7,17 @@ Think Playtomic, but for 5-, 7-, 9- and 11-a-side football.
 The site is in **English** by default, with **Norwegian (bokmål)** available through the language switcher.
 It can be installed on a phone's home screen as a **PWA**.
 
-> Status: in development. The public landing page, the database schema and the sample data are ready.
-> Accounts, match creation and search are next (see [Roadmap](#-roadmap)). Online payments are disabled for now.
+> Status: in development. Players can sign up, find matches, join or leave (with a waitlist), and hosts can
+> create, edit, cancel and share matches. Online payments are disabled for now (see [Roadmap](#-roadmap)).
+
+## ✨ Features
+
+- **Accounts:** email + password, email sign-in link, optional Google sign-in, profile onboarding (level, position, language)
+- **Find matches:** filters by day, area, level, format and free spots
+- **Match page:** players and waitlist, pitch details with map and directions, join/leave, share (link, WhatsApp, native share), add to calendar (.ics)
+- **Hosting:** create, edit and cancel matches; private matches are link-only
+- **My matches:** upcoming, hosting and past
+- **English and Norwegian (bokmål)**, installable **PWA** with offline page
 
 ---
 
@@ -41,14 +50,26 @@ It can be installed on a phone's home screen as a **PWA**.
 
 ## ⚙️ Local development
 
-Requirements: Node.js 20+.
+Requirements: Node.js 20+ and, for a local database, Docker.
 
 ```bash
 git clone https://github.com/agustinsoares/futbol-7.git
-cd futbol-7/apps/web
-cp ../../.env.example .env.local   # fill in the Supabase values
+cd futbol-7
+
+# Local Supabase (Postgres + Auth + API) with the migrations and Bergen seed data
+npx supabase start          # prints the local API URL and publishable key
+
+cd apps/web
+cp ../../.env.example .env.local   # paste the local URL and publishable key
 npm install
 npm run dev                        # http://localhost:3000
+```
+
+Seed users get a random password. To log in locally, set one:
+
+```bash
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+  -c "update auth.users set encrypted_password = extensions.crypt('local-pass-123', extensions.gen_salt('bf')) where email like '%@aaltofootball.test'"
 ```
 
 Without Supabase variables the site still runs and shows sample matches.
@@ -80,6 +101,14 @@ Security model:
 - Only admins manage pitches and change roles.
 - Joining and leaving happen only through `join_match` / `leave_match`, which lock the match row so the last spot can't be taken twice, and move the first waitlisted player up when someone drops out.
 
+### Auth settings (Supabase dashboard → Authentication → URL Configuration)
+
+- **Site URL:** the production URL of the site.
+- **Redirect URLs:** add `https://<your-domain>/**` and `https://*-<your-vercel-team>.vercel.app/**` (for previews).
+- **Google sign-in (optional):** enable the Google provider in Supabase and set `NEXT_PUBLIC_AUTH_GOOGLE_ENABLED=true`.
+- **Emails:** Supabase's built-in email service is heavily rate-limited; configure custom SMTP before launch
+  so confirmation and sign-in links reach everyone.
+
 ## 🚀 Deploy on Vercel
 
 - **Root Directory:** `apps/web`
@@ -91,12 +120,13 @@ Security model:
 - [x] Landing page (English + Norwegian bokmål)
 - [x] Installable PWA with offline page
 - [x] Database schema, security rules and Bergen sample data
-- [ ] Sign in (Google and email magic link) and profile onboarding
-- [ ] Create, edit and cancel matches (hosts)
-- [ ] Match search with filters and map
-- [ ] Match page: join and leave, with waitlist
-- [ ] Share links and private matches by invite
-- [ ] Reminders and calendar export
+- [x] Sign in (password, email link, optional Google) and profile onboarding
+- [x] Create, edit and cancel matches (hosts)
+- [x] Match search with filters
+- [x] Match page: join and leave, with waitlist
+- [x] Share links, link-only private matches and calendar export
+- [ ] Email reminders before kick-off
+- [ ] Map view of matches
 - [ ] Balanced teams, results, ratings and player level
 - [ ] Online payments (disabled for now)
 

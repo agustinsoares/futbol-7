@@ -27,8 +27,6 @@ const novaSquare = localFont({
     display: 'swap',
 });
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
     return LOCALES.map((lang) => ({ lang }));
 }
@@ -76,7 +74,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
     return (
         <html lang={lang} className={`${albertSans.variable} ${novaSquare.variable}`}>
             <body className="flex min-h-screen flex-col">
-                <Header locale={lang} dict={dict.nav} />
+                <Header locale={lang} dict={dict} />
                 <main className="flex-1">{children as ReactNode}</main>
                 <Footer locale={lang} dict={dict} />
                 <ServiceWorkerRegistration />
