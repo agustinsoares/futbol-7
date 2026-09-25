@@ -20,8 +20,11 @@ yarn-error.log*
 
 # Env files
 .env
+.env*.local
 
 # VS Code
 .vscode/
 
 .DS_Store
+# TypeScript
+*.tsbuildinfo

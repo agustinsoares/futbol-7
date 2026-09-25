@@ -1,161 +1,113 @@
-# ⚽ LigaF7 – Amateur Football League Management Platform
+# ⚽ Aalto Football
 
-## 📌 Overview
-LigaF7 is a full-stack web application for managing amateur 7-a-side football leagues.  
-It allows organizers to create tournaments, register teams, schedule matches, track results, generate standings, and manage payments.
+Aalto Football is a web app for pick-up football in **Bergen, Norway**.
+**Hosts** create matches (pitch, time, format, level and spots) and **players** find them and join.
+Think Playtomic, but for 5-, 7-, 9- and 11-a-side football.
 
-This project is **fictional but fully functional** – designed to showcase modern full-stack skills for a portfolio.
+The site is in **English** by default, with **Norwegian (bokmål)** available through the language switcher.
+It can be installed on a phone's home screen as a **PWA**.
 
----
-
-## 🚀 Features
-- Public landing page with league info, rules, and sponsors  
-- User authentication (players, captains, referees, admins)  
-- Team registration & player invitations  
-- Season/league management (fixtures, venues, referees)  
-- Match scheduling with results & statistics (goals, cards, assists)  
-- Standings, top scorers & fair play tables  
-- Online payments (Stripe test mode)  
-- Admin panel for CRUD operations  
-- Responsive UI (mobile-first, also optimized for desktop)  
-- Deployment ready with Docker + CI/CD (GitHub Actions)  
+> Status: in development. The public landing page, the database schema and the sample data are ready.
+> Accounts, match creation and search are next (see [Roadmap](#-roadmap)). Online payments are disabled for now.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Stack
 
-### Frontend
-- Next.js 14 (React + App Router)  
-- TypeScript  
-- TailwindCSS  
-- shadcn/ui (UI components)  
-- Zustand / Redux Toolkit (state management, optional)  
+- **Web:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, in `apps/web`
+- **Backend:** Supabase (Postgres + Auth + RLS), with migrations in `supabase/`
+- **Deploy:** Vercel
+- **CI:** GitHub Actions (lint, types, format, build, and migrations against a real Postgres)
 
-### Backend
-- NestJS (TypeScript backend framework)  
-- PostgreSQL (database)  
-- Prisma (ORM)  
-- NextAuth.js (authentication)  
-- Stripe (payments – test mode)  
+## 📂 Structure
 
-### Infrastructure / DevOps
-- Docker  
-- GitHub Actions (CI/CD)  
-- Deployment: Vercel (frontend) + Railway/Fly.io (API + DB)  
-
----
-
-## 📂 Repository Structure
 ```
 .
-├─ apps/
-│  ├─ web/              # Next.js frontend
-│  └─ api/              # NestJS backend
-├─ packages/
-│  ├─ ui/               # shared UI components
-│  └─ config/           # eslint, tsconfig, tailwind config
-├─ prisma/
-│  ├─ schema.prisma     # database schema
-│  └─ seed.ts           # seed data
-├─ docker-compose.yml
-├─ .github/workflows/ci.yml
-└─ README.md
+├─ apps/web/                  # Next.js app (deployed to Vercel)
+│  ├─ public/                 # Hero image, PWA icons, service worker (sw.js)
+│  └─ src/
+│     ├─ app/[lang]/          # Localised routes: /en/… and /nb/…
+│     ├─ app/manifest.ts      # PWA manifest
+│     ├─ components/          # Header, Footer, MatchCard, LanguageSwitcher…
+│     ├─ i18n/                # Language config and dictionaries (en, nb)
+│     ├─ lib/supabase/        # Supabase clients and database types
+│     └─ proxy.ts             # Redirects / to /en or /nb (cookie, then browser language)
+├─ supabase/
+│  ├─ migrations/             # Schema, RLS policies, join/leave functions
+│  ├─ seed.sql                # Bergen sample data (users, pitches, matches)
+│  └─ tests/                  # Local Supabase stub + RLS tests
+└─ docs/                      # Brand guide
 ```
 
----
+## ⚙️ Local development
 
-## ⚙️ Setup & Development
+Requirements: Node.js 20+.
 
-### 1. Clone repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/ligaf7.git
-cd ligaf7
+git clone https://github.com/agustinsoares/futbol-7.git
+cd futbol-7/apps/web
+cp ../../.env.example .env.local   # fill in the Supabase values
+npm install
+npm run dev                        # http://localhost:3000
 ```
 
-### 2. Environment variables
-Copy the example file and set your local values:
+Without Supabase variables the site still runs and shows sample matches.
+
+Useful commands (from `apps/web`):
+
 ```bash
-cp .env.example .env
+npm run lint          # ESLint
+npm run typecheck     # TypeScript
+npm run format        # Prettier
+npm run build         # production build
 ```
 
-Edit `.env` and add your PostgreSQL connection:
-```
-DATABASE_URL="postgresql://futbol_app:YOUR_PASSWORD@localhost:5432/futbol_dev?schema=public"
-NEXTAUTH_SECRET="changeme"
-NEXTAUTH_URL="http://localhost:3000"
-STRIPE_SECRET_KEY="sk_test_xxx"
-STRIPE_WEBHOOK_SECRET="whsec_xxx"
-```
+## 🗄️ Database (Supabase)
 
-### 3. Run with Docker (recommended for local dev)
-```bash
-docker compose up -d
-```
+Project: `yqtxllyhmmwgvvirlput` (organisation *Aalto Football*). Migrations and sample data are already applied.
 
-### 4. Migrate & seed database
-```bash
-npx prisma migrate dev --name init
-npx prisma generate
-npx ts-node prisma/seed.ts
-```
+To set up a new project:
 
-### 5. Start development
+1. Apply the migrations in `supabase/migrations/` in order (SQL editor or `supabase db push`).
+2. Optionally run `supabase/seed.sql` for Bergen sample data. It creates `admin@aaltofootball.test` (admin),
+   `player@aaltofootball.test` (regular user) and 20 more players, 7 pitches and 12 matches.
+   Users get a random password: set one from **Authentication → Users** to log in with them.
+3. Put the project URL and publishable key in `apps/web/.env.production` (public values) and in `.env.local` for development.
 
-Frontend:
-```bash
-cd apps/web
-npm run dev
-```
+Security model:
 
-Backend:
-```bash
-cd apps/api
-npm run start:dev
-```
+- Everyone can read public matches, pitches and profiles. Private matches are only visible to the host, players in them and admins.
+- Only admins manage pitches and change roles.
+- Joining and leaving happen only through `join_match` / `leave_match`, which lock the match row so the last spot can't be taken twice, and move the first waitlisted player up when someone drops out.
 
-### 6. Stop the project
-If it’s running in the terminal → press:
-```
-CTRL + C
-```
+## 🚀 Deploy on Vercel
 
----
+- **Root Directory:** `apps/web`
+- **Environment variables:** none required; the public Supabase values are in `apps/web/.env.production`.
+  Set `NEXT_PUBLIC_SITE_URL` only if you use a custom domain.
 
-## 🔍 Useful commands
-- **Format Prisma schema**
-```bash
-npx prisma format
-```
+## 🗺️ Roadmap
 
-- **Check DB schema validity**
-```bash
-npx prisma validate
-```
+- [x] Landing page (English + Norwegian bokmål)
+- [x] Installable PWA with offline page
+- [x] Database schema, security rules and Bergen sample data
+- [ ] Sign in (Google and email magic link) and profile onboarding
+- [ ] Create, edit and cancel matches (hosts)
+- [ ] Match search with filters and map
+- [ ] Match page: join and leave, with waitlist
+- [ ] Share links and private matches by invite
+- [ ] Reminders and calendar export
+- [ ] Balanced teams, results, ratings and player level
+- [ ] Online payments (disabled for now)
 
-- **View migrations history**
-```bash
-npx prisma migrate status
-```
+## 🎨 Brand
 
-- **Run tests**
-```bash
-npm test
-```
-
----
-
-## 📸 Screenshots / Demo
-_(to be added once UI is built – mobile and desktop views)_  
-
----
+Colours, typography and tone: [`docs/football_league_branding.md`](docs/football_league_branding.md).
 
 ## 📄 License
-MIT License – free to use and adapt.
 
----
+MIT.
 
 ## 👤 Author
-**Agustín M. Soares**  
-- LinkedIn: [linkedin.com/in/agustinsoares](https://www.linkedin.com/in/agustinsoares)  
-- Portfolio: [agustinsoares.github.io](https://agustinsoares.github.io/)  
-- GitHub: [github.com/agustinsoares](https://github.com/agustinsoares)  
+
+**Agustín M. Soares**: [LinkedIn](https://www.linkedin.com/in/agustinsoares) · [Portfolio](https://agustinsoares.github.io/) · [GitHub](https://github.com/agustinsoares)

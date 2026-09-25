@@ -1,9 +1,9 @@
-# Brand Style Guide – Aalto Football
+# Guía de marca – Aalto Football
 
 ---
 
 ## 1. Brand Name
-- **AaLTO FOOTbALL**
+- **Aalto Football** (wordmark: AALTO en azul + FOOTBALL)
 - Naming principles: short (1–2 words), international-friendly, energetic, easy to remember.
 
 ---
