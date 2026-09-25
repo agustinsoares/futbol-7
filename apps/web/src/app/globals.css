@@ -1,19 +1,38 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
+
+/*
+ * Tokens de marca (ver docs/football_league_branding.md).
+ * Las variantes "-strong" existen para texto sobre blanco y botones:
+ * el azul y el naranja de marca no llegan al contraste AA (4.5:1) con texto pequeño.
+ */
+@theme {
+    --color-primary: #2979ff;
+    --color-primary-strong: #1f66e5;
+    --color-primary-soft: #eaf2ff;
+    --color-charcoal: #333333;
+    --color-accent: #ff6d00;
+    --color-accent-strong: #b34a00;
+    --color-accent-soft: #fff1e6;
+    --color-surface: #f5f5f5;
+
+    --font-sans: var(--font-albert), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-nova), ui-sans-serif, system-ui, sans-serif;
+}
 
 @layer base {
-    :root {
-        --font-albert: 'Albert Sans', sans-serif;
-        --font-nova: 'Nova Square', sans-serif;
+    html {
+        scroll-behavior: smooth;
     }
-}
 
-body {
-    @apply font-albert;
-}
+    body {
+        @apply bg-white font-sans text-charcoal antialiased;
+    }
 
-h1,
-h2,
-h3 {
-    @apply font-nova;
+    h1 {
+        @apply font-display;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-primary;
+    }
 }

@@ -1,22 +1,61 @@
-import { Albert_Sans, Nova_Square } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
+import type { ReactNode } from 'react';
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import { SITE_DESCRIPTION, SITE_NAME, siteUrl } from '@/lib/site';
 import './globals.css';
-import React from "react";
 
-const albertSans = Albert_Sans({ subsets: ['latin'], variable: '--font-albert' });
-const novaSquare = Nova_Square({ weight: "400", subsets: ['latin'], variable: '--font-nova' });
+const albertSans = localFont({
+    src: [
+        { path: '../fonts/AlbertSans-VariableFont_wght.ttf', style: 'normal' },
+        { path: '../fonts/AlbertSans-Italic-VariableFont_wght.ttf', style: 'italic' },
+    ],
+    weight: '100 900',
+    variable: '--font-albert',
+    display: 'swap',
+});
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const novaSquare = localFont({
+    src: '../fonts/NovaSquare-Regular.ttf',
+    weight: '400',
+    variable: '--font-nova',
+    display: 'swap',
+});
+
+export const metadata: Metadata = {
+    metadataBase: siteUrl(),
+    title: {
+        default: `${SITE_NAME} · Partidos de fútbol cerca de ti`,
+        template: `%s · ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    applicationName: SITE_NAME,
+    openGraph: {
+        type: 'website',
+        locale: 'es_ES',
+        siteName: SITE_NAME,
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: '#2979ff',
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en" className={`${albertSans.variable} ${novaSquare.variable}`}>
-            <body className="min-h-screen bg-gray-50 text-gray-800">
-                <header className="bg-green-600 text-white p-4">
-                    <h1 className="text-2xl font-nova">Futbol 7</h1>
-                    {/* Navbar: Add links based on role */}
-                </header>
-                <main className="container mx-auto p-4">{children}</main>
-                <footer className="bg-gray-200 p-4 text-center">
-                    <p>&copy; 2025 Futbol 7. All rights reserved.</p>
-                </footer>
+        <html lang="es" className={`${albertSans.variable} ${novaSquare.variable}`}>
+            <body className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
             </body>
         </html>
     );

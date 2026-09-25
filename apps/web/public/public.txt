@@ -1,6 +1,0 @@
-estáticos servidos por Next.js
-
-incluimos fuentes, imagenes, logo, iconos
-
-Keep public for static assets (e.g., index.html for fallback, fonts for Albert Sans/Nova Square).
-
