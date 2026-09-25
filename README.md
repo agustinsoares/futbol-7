@@ -64,11 +64,15 @@ npm run build         # production build
 
 ## 🗄️ Database (Supabase)
 
+Project: `yqtxllyhmmwgvvirlput` (organisation *Aalto Football*). Migrations and sample data are already applied.
+
+To set up a new project:
+
 1. Apply the migrations in `supabase/migrations/` in order (SQL editor or `supabase db push`).
 2. Optionally run `supabase/seed.sql` for Bergen sample data. It creates `admin@aaltofootball.test` (admin),
    `player@aaltofootball.test` (regular user) and 20 more players, 7 pitches and 12 matches.
    Users get a random password: set one from **Authentication → Users** to log in with them.
-3. Copy the project URL and publishable key into `.env.local` and into Vercel's environment variables.
+3. Put the project URL and publishable key in `apps/web/.env.production` (public values) and in `.env.local` for development.
 
 Security model:
 
@@ -79,7 +83,8 @@ Security model:
 ## 🚀 Deploy on Vercel
 
 - **Root Directory:** `apps/web`
-- **Environment variables:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (and `NEXT_PUBLIC_SITE_URL` if you use a custom domain)
+- **Environment variables:** none required; the public Supabase values are in `apps/web/.env.production`.
+  Set `NEXT_PUBLIC_SITE_URL` only if you use a custom domain.
 
 ## 🗺️ Roadmap
 

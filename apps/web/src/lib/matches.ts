@@ -1,12 +1,44 @@
 import 'server-only';
 import type { MatchSummary } from '@/components/MatchCard';
 import { exampleMatches } from './example-matches';
+import type { Views } from './supabase/database.types';
 import { createSupabasePublicClient } from './supabase/server';
 
 interface UpcomingMatches {
     matches: MatchSummary[];
-    /** true si son datos de ejemplo (Supabase sin configurar o sin partidos). */
+    /** true si son datos de ejemplo (Supabase sin configurar, con error o sin partidos). */
     isExample: boolean;
+}
+
+type ListingRow = Pick<
+    Views<'match_listings'>,
+    | 'id'
+    | 'format'
+    | 'skill_level'
+    | 'starts_at'
+    | 'max_players'
+    | 'price_per_player'
+    | 'venue_name'
+    | 'venue_area'
+    | 'confirmed_count'
+>;
+
+// Las columnas de una vista salen como opcionales en los tipos generados; descartamos filas incompletas.
+function toSummary(row: ListingRow): MatchSummary | null {
+    const { id, format, skill_level, starts_at, max_players, venue_name, venue_area } = row;
+    if (!id || !format || !skill_level || !starts_at || !max_players || !venue_name || !venue_area)
+        return null;
+    return {
+        id,
+        venue: venue_name,
+        area: `Bergen · ${venue_area}`,
+        startsAt: starts_at,
+        format,
+        level: skill_level,
+        spotsTotal: max_players,
+        spotsTaken: row.confirmed_count ?? 0,
+        pricePerPlayer: row.price_per_player,
+    };
 }
 
 export async function getUpcomingMatches(limit: number): Promise<UpcomingMatches> {
@@ -16,7 +48,7 @@ export async function getUpcomingMatches(limit: number): Promise<UpcomingMatches
     const { data, error } = await supabase
         .from('match_listings')
         .select(
-            'id, title, format, skill_level, starts_at, max_players, price_per_player, venue_name, venue_area, confirmed_count',
+            'id, format, skill_level, starts_at, max_players, price_per_player, venue_name, venue_area, confirmed_count',
         )
         .eq('visibility', 'public')
         .in('status', ['open', 'full'])
@@ -28,20 +60,8 @@ export async function getUpcomingMatches(limit: number): Promise<UpcomingMatches
         console.error('Error loading upcoming matches', error);
         return { matches: exampleMatches(), isExample: true };
     }
-    if (!data?.length) return { matches: exampleMatches(), isExample: true };
 
-    return {
-        isExample: false,
-        matches: data.map((row) => ({
-            id: row.id,
-            venue: row.venue_name,
-            area: `Bergen · ${row.venue_area}`,
-            startsAt: row.starts_at,
-            format: row.format,
-            level: row.skill_level,
-            spotsTotal: row.max_players,
-            spotsTaken: row.confirmed_count,
-            pricePerPlayer: row.price_per_player,
-        })),
-    };
+    const matches = (data ?? []).map(toSummary).filter((m): m is MatchSummary => m !== null);
+    if (!matches.length) return { matches: exampleMatches(), isExample: true };
+    return { matches, isExample: false };
 }

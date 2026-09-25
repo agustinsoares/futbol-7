@@ -5,7 +5,7 @@
 select id as player from auth.users where email='player@aaltofootball.test' \gset
 select id as ingrid from auth.users where email='ingrid.haugland@aaltofootball.test' \gset
 select id as lars from auth.users where email='lars.johannessen@aaltofootball.test' \gset
-select id as m_after from matches where title='After-work 7-a-side' \gset
+select id as m_after from public.matches where title='After-work 7-a-side' \gset
 select id as m_full from matches where title='Lunchtime futsal-style 5s' \gset
 select id as m_priv from matches where title like 'Friends only%' \gset
 select id as m_past from matches where title='Last week''s 7s' \gset
@@ -45,8 +45,14 @@ select status, confirmed_count, waitlist_count from match_listings where id = :'
 \echo '--- 8. join past match (expect error)'
 set role authenticated; select set_config('request.jwt.claim.sub', :'player', false);
 select join_match(:'m_past');
-\echo '--- 9. player cannot see or join private match they are not in'
-select count(*) as priv_visible from matches where id = :'m_priv';
+\echo '--- 9. someone outside a private match cannot see or join it (expect 0 and "Match not found")'
+reset role;
+select u.id as outsider from auth.users u
+where u.id <> (select host_id from public.matches where id = :'m_priv')
+  and u.id not in (select user_id from public.match_participants where match_id = :'m_priv')
+  and u.email not like 'admin%' limit 1 \gset
+set role authenticated; select set_config('request.jwt.claim.sub', :'outsider', false);
+select count(*) as priv_visible from public.matches where id = :'m_priv';
 select join_match(:'m_priv');
 \echo '--- 10. anon cannot call join_match (expect permission denied)'
 reset role; set role anon;
