@@ -62,13 +62,13 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
                         <p className="mt-5 text-lg text-white/85">{dict.hero.subtitle}</p>
                         <div className="mt-8 flex flex-wrap gap-3">
                             <Link
-                                href="#matches"
+                                href={`/${lang}/matches`}
                                 className="rounded-lg bg-primary-strong px-6 py-3 font-semibold text-white transition-colors hover:bg-primary"
                             >
                                 {dict.hero.ctaFind}
                             </Link>
                             <Link
-                                href="#hosts"
+                                href={`/${lang}/matches/new`}
                                 className="rounded-lg bg-white px-6 py-3 font-semibold text-primary-strong transition-colors hover:bg-primary-soft"
                             >
                                 {dict.hero.ctaHost}
@@ -119,6 +119,16 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
                             <MatchCard key={match.id} match={match} locale={lang} dict={dict} />
                         ))}
                     </div>
+                    {!isExample && (
+                        <div className="mt-8 text-center">
+                            <Link
+                                href={`/${lang}/matches`}
+                                className="inline-block rounded-lg border border-black/15 bg-white px-6 py-3 font-semibold transition-colors hover:bg-surface"
+                            >
+                                {dict.matchList.viewAll}
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -144,6 +154,12 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
                     <div className="mt-12 rounded-2xl bg-primary-strong px-6 py-10 text-center text-white sm:px-12">
                         <p className="font-display text-2xl sm:text-3xl">{dict.hosts.bannerTitle}</p>
                         <p className="mx-auto mt-3 max-w-xl text-white/85">{dict.hosts.bannerText}</p>
+                        <Link
+                            href={`/${lang}/matches/new`}
+                            className="mt-6 inline-block rounded-lg bg-white px-6 py-3 font-semibold text-primary-strong transition-colors hover:bg-primary-soft"
+                        >
+                            {dict.hosts.bannerCta}
+                        </Link>
                     </div>
                 </div>
             </section>

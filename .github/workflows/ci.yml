@@ -27,6 +27,7 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm test
       - run: npm run build
 
   database:
@@ -57,3 +58,52 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/seed.sql
           psql -v ON_ERROR_STOP=1 -f supabase/seed.sql
           psql -c "select status, count(*) from public.matches group by status order by 1"
+
+  e2e:
+    name: End-to-end (local Supabase + Playwright)
+    runs-on: ubuntu-latest
+    needs: [web, database]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start local Supabase (migrations + seed)
+        run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime,storage-api,postgres-meta
+      - name: Configure app for local Supabase
+        run: |
+          psql postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+            -c "update auth.users set encrypted_password = extensions.crypt('local-pass-123', extensions.gen_salt('bf')) where email like '%@aaltofootball.test'"
+          supabase status -o json > /tmp/sb.json
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$(jq -r .API_URL /tmp/sb.json)"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$(jq -r .PUBLISHABLE_KEY /tmp/sb.json)"
+            echo "SUPABASE_SECRET_KEY=$(jq -r .SECRET_KEY /tmp/sb.json)"
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000"
+            echo "CRON_SECRET=local-cron-secret"
+          } > apps/web/.env.local
+      - name: Install and build
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+      - name: Run end-to-end tests
+        working-directory: apps/web
+        run: |
+          npx next start -p 3000 > /tmp/next.log 2>&1 &
+          npx wait-on -t 60000 http://localhost:3000/en
+          npm run test:e2e
+      - name: Upload screenshots and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            apps/web/e2e/screenshots
+            /tmp/next.log

@@ -25,3 +25,21 @@ export function formatPrice(amount: number, locale: Locale): string {
 export function pluralCategory(count: number, locale: Locale): 'one' | 'other' {
     return new Intl.PluralRules(INTL_LOCALE[locale]).select(count) === 'one' ? 'one' : 'other';
 }
+
+/** "Saturday 3 October · 12:00–13:00" en hora de Bergen. */
+export function formatMatchDateRange(iso: string, durationMinutes: number, locale: Locale): string {
+    const start = new Date(iso);
+    const end = new Date(start.getTime() + durationMinutes * 60_000);
+    const day = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+        timeZone: TIME_ZONE,
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+    }).format(start);
+    const time = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+        timeZone: TIME_ZONE,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    return `${day} · ${time.format(start)}–${time.format(end)}`;
+}

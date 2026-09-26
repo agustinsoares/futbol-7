@@ -10,7 +10,7 @@ select id as m_full from matches where title='Lunchtime futsal-style 5s' \gset
 select id as m_priv from matches where title like 'Friends only%' \gset
 select id as m_past from matches where title='Last week''s 7s' \gset
 
-\echo '--- 1. anon: public matches visible, private hidden'
+\echo '--- 1. anon: sees public and private (link-only) rows; listings filter by visibility in the app'
 set role anon;
 select count(*) filter (where visibility='public') pub, count(*) filter (where visibility='private') priv from match_listings;
 reset role;
@@ -45,7 +45,7 @@ select status, confirmed_count, waitlist_count from match_listings where id = :'
 \echo '--- 8. join past match (expect error)'
 set role authenticated; select set_config('request.jwt.claim.sub', :'player', false);
 select join_match(:'m_past');
-\echo '--- 9. someone outside a private match cannot see or join it (expect 0 and "Match not found")'
+\echo '--- 9. someone with the link can open a private match and join it (expect 1 and a status)'
 reset role;
 select u.id as outsider from auth.users u
 where u.id <> (select host_id from public.matches where id = :'m_priv')

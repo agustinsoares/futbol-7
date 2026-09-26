@@ -28,3 +28,6 @@ yarn-error.log*
 .DS_Store
 # TypeScript
 *.tsbuildinfo
+
+# Capturas de los tests end-to-end
+apps/web/e2e/screenshots/
