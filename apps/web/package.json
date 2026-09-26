@@ -9,11 +9,14 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:e2e": "node e2e/core.mjs && node e2e/features.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
+    "leaflet": "^1.9.4",
     "next": "^16.3.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -21,15 +24,18 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^24.5.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.6",
+    "playwright": "^1.63.0",
     "postcss": "^8.5.6",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.1.16",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.2"
   }
 }

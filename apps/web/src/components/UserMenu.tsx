@@ -10,6 +10,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 interface MenuUser {
     id: string;
     name: string;
+    isAdmin: boolean;
 }
 
 function initials(name: string): string {
@@ -47,10 +48,16 @@ export default function UserMenu({ locale, dict }: { locale: Locale; dict: Dicti
             }
             const { data } = await supabase
                 .from('profiles')
-                .select('full_name')
+                .select('full_name, role')
                 .eq('id', authUser.id)
                 .maybeSingle();
-            if (!cancelled) setUser({ id: authUser.id, name: data?.full_name || authUser.email || '' });
+            if (!cancelled) {
+                setUser({
+                    id: authUser.id,
+                    name: data?.full_name || authUser.email || '',
+                    isAdmin: data?.role === 'admin',
+                });
+            }
         }
 
         load();
@@ -114,6 +121,11 @@ export default function UserMenu({ locale, dict }: { locale: Locale; dict: Dicti
                 <Link href={`/${locale}/profile`} className={itemClass}>
                     {dict.profile}
                 </Link>
+                {user.isAdmin && (
+                    <Link href={`/${locale}/admin/venues`} className={itemClass}>
+                        {dict.admin}
+                    </Link>
+                )}
                 <div className="border-t border-black/5">
                     <button type="button" onClick={signOut} className={`${itemClass} w-full text-left`}>
                         {dict.signOut}

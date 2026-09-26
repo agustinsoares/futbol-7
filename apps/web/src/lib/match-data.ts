@@ -19,6 +19,7 @@ export interface MatchFilters {
     level: SkillLevel | null;
     format: MatchFormat | null;
     onlyOpen: boolean;
+    view: 'list' | 'map';
 }
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -38,6 +39,7 @@ export function parseFilters(params: SearchParams): MatchFilters {
         level: (SKILL_LEVELS as string[]).includes(level ?? '') ? (level as SkillLevel) : null,
         format: (MATCH_FORMATS as string[]).includes(format ?? '') ? (format as MatchFormat) : null,
         onlyOpen: one(params.open) === '1',
+        view: one(params.view) === 'map' ? 'map' : 'list',
     };
 }
 
@@ -77,6 +79,9 @@ export function toSummary(row: ListingRow): MatchSummary | null {
         spotsTaken: row.confirmed_count ?? 0,
         pricePerPlayer: row.price_per_player,
         status: row.status ?? undefined,
+        venueId: row.venue_id ?? undefined,
+        lat: row.venue_lat ?? undefined,
+        lng: row.venue_lng ?? undefined,
     };
 }
 
@@ -127,6 +132,8 @@ export interface Participant {
     name: string;
     level: SkillLevel | null;
     position: Enums<'player_position'> | null;
+    team: 'A' | 'B' | null;
+    attended: boolean | null;
 }
 
 export interface MatchDetail {
@@ -151,7 +158,9 @@ export async function getMatchDetail(id: string): Promise<MatchDetail | null> {
         supabase.from('profiles').select('full_name').eq('id', match.host_id).maybeSingle(),
         supabase
             .from('match_participants')
-            .select('user_id, status, joined_at, profiles(full_name, skill_level, preferred_position)')
+            .select(
+                'user_id, status, joined_at, team, attended, profiles(full_name, skill_level, preferred_position)',
+            )
             .eq('match_id', id)
             .in('status', ['confirmed', 'waitlisted'])
             .order('joined_at', { ascending: true }),
@@ -165,6 +174,8 @@ export async function getMatchDetail(id: string): Promise<MatchDetail | null> {
         name: row.profiles?.full_name || '—',
         level: row.profiles?.skill_level ?? null,
         position: row.profiles?.preferred_position ?? null,
+        team: row.team === 'A' || row.team === 'B' ? row.team : null,
+        attended: row.attended,
     }));
 
     return {
@@ -217,5 +228,95 @@ export async function listMyMatches(userId: string): Promise<{ upcoming: MyMatch
         past: all
             .filter((m) => new Date(m.summary.startsAt).getTime() <= now || m.summary.status === 'completed')
             .reverse(),
+    };
+}
+
+export interface ChatMessage {
+    id: string;
+    userId: string;
+    name: string;
+    body: string;
+    createdAt: string;
+}
+
+/** Mensajes del chat. RLS devuelve vacío si el usuario no es parte del partido. */
+export async function listMessages(matchId: string): Promise<ChatMessage[]> {
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase
+        .from('match_messages')
+        .select('id, user_id, body, created_at, profiles(full_name)')
+        .eq('match_id', matchId)
+        .order('created_at', { ascending: true })
+        .limit(200);
+    return (data ?? []).map((m) => ({
+        id: m.id,
+        userId: m.user_id,
+        name: m.profiles?.full_name || '—',
+        body: m.body,
+        createdAt: m.created_at,
+    }));
+}
+
+/** Valoraciones que el usuario actual ya dio en un partido: { jugador: puntuación }. */
+export async function myRatings(matchId: string, userId: string): Promise<Record<string, number>> {
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase
+        .from('player_ratings')
+        .select('rated_id, score')
+        .eq('match_id', matchId)
+        .eq('rater_id', userId);
+    return Object.fromEntries((data ?? []).map((r) => [r.rated_id, r.score]));
+}
+
+export interface PlayerStats {
+    matchesPlayed: number;
+    noShows: number;
+    attendanceRate: number | null;
+    avgRating: number | null;
+    ratingsCount: number;
+    matchesHosted: number;
+}
+
+export async function getPlayer(
+    userId: string,
+): Promise<{ profile: Tables<'profiles'>; stats: PlayerStats; recent: MatchSummary[] } | null> {
+    if (!/^[0-9a-f-]{36}$/i.test(userId)) return null;
+    const supabase = await createSupabaseServerClient();
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+    if (!profile) return null;
+
+    const [{ data: statsRows }, { data: played }] = await Promise.all([
+        supabase.rpc('player_stats', { p_user_id: userId }),
+        supabase
+            .from('match_participants')
+            .select('match_id')
+            .eq('user_id', userId)
+            .eq('status', 'confirmed'),
+    ]);
+    const s = statsRows?.[0];
+    const ids = (played ?? []).map((r) => r.match_id);
+    let recent: MatchSummary[] = [];
+    if (ids.length) {
+        const { data } = await supabase
+            .from('match_listings')
+            .select('*')
+            .in('id', ids)
+            .eq('status', 'completed')
+            .order('starts_at', { ascending: false })
+            .limit(6);
+        recent = (data ?? []).map(toSummary).filter(isSummary);
+    }
+
+    return {
+        profile,
+        stats: {
+            matchesPlayed: s?.matches_played ?? 0,
+            noShows: s?.no_shows ?? 0,
+            attendanceRate: s?.attendance_rate ?? null,
+            avgRating: s?.avg_rating ?? null,
+            ratingsCount: s?.ratings_count ?? 0,
+            matchesHosted: s?.matches_hosted ?? 0,
+        },
+        recent,
     };
 }

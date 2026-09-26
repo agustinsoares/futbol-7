@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { osloWallTimeToDate } from '@/lib/time';
+import { addDays, osloWallTimeToDate } from '@/lib/time';
 
 export type MatchFormErrorKey = keyof Dictionary['matchForm']['errors'];
 export type MatchFormField =
@@ -116,18 +116,26 @@ export async function createMatchAction(_prev: MatchFormState, formData: FormDat
     } = await supabase.auth.getUser();
     if (!user) redirect(`/${locale}/login?next=/${locale}/matches/new`);
 
-    const { data: created, error } = await supabase
-        .from('matches')
-        .insert({ ...toRow(data), host_id: user.id })
-        .select('id')
-        .single();
+    // Partido semanal: una fila por semana, misma hora de Bergen (respeta el cambio de horario).
+    const repeat = formData.get('repeat') === 'on';
+    const weeks = repeat ? Math.min(Math.max(Number(formData.get('weeks')) || 1, 1), 12) : 1;
+    const seriesId = weeks > 1 ? crypto.randomUUID() : null;
+    const rows = Array.from({ length: weeks }, (_, i) => {
+        const startsAt = i === 0 ? data.startsAt : osloWallTimeToDate(addDays(data.date, 7 * i), data.time)!;
+        return { ...toRow(data), starts_at: startsAt.toISOString(), host_id: user.id, series_id: seriesId };
+    });
+
+    const { data: createdRows, error } = await supabase.from('matches').insert(rows).select('id, starts_at');
+    const created = createdRows?.sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
     if (error || !created) {
         console.error('createMatch failed', error);
         return withValues({ error: 'generic' }, formData);
     }
 
-    // El host juega su propio partido: ocupa la primera plaza.
-    await supabase.rpc('join_match', { p_match_id: created.id });
+    // El host juega sus propios partidos: ocupa la primera plaza de cada uno.
+    for (const row of createdRows!) {
+        await supabase.rpc('join_match', { p_match_id: row.id });
+    }
 
     revalidateLists(locale);
     redirect(`/${locale}/matches/${created.id}`);

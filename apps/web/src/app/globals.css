@@ -36,3 +36,75 @@
         @apply outline-2 outline-offset-2 outline-primary;
     }
 }
+
+/*
+ * Estrellas de valoración: el DOM va de 5 a 1 y se muestra invertido (1 → 5),
+ * así "~ label" alcanza a las estrellas de la izquierda de la elegida o señalada.
+ */
+@layer components {
+    .stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+    .stars label {
+        cursor: pointer;
+        padding: 0 0.125rem;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: rgb(0 0 0 / 0.2);
+    }
+
+    .stars label:has(input:checked),
+    .stars label:has(input:checked) ~ label {
+        color: var(--color-accent);
+    }
+
+    .stars:hover label {
+        color: rgb(0 0 0 / 0.2);
+    }
+
+    .stars:hover label:hover,
+    .stars:hover label:hover ~ label {
+        color: var(--color-accent);
+    }
+
+    .stars label:has(input:focus-visible) {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+        border-radius: 0.25rem;
+    }
+}
+
+/* Marcadores y popups del mapa de partidos (Leaflet). */
+@layer components {
+    .map-pin {
+        display: flex;
+        height: 36px;
+        width: 36px;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #fff;
+        border-radius: 9999px;
+        background: var(--color-primary-strong);
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
+    }
+
+    .map-popup-title {
+        margin: 0 0 0.25rem;
+        font-weight: 700;
+    }
+
+    .map-popup-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .map-popup-list li + li {
+        margin-top: 0.5rem;
+    }
+}

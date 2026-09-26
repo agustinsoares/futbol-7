@@ -18,6 +18,9 @@ export interface MatchSummary {
     spotsTaken: number;
     pricePerPlayer?: number | null;
     status?: 'open' | 'full' | 'cancelled' | 'completed';
+    venueId?: string;
+    lat?: number;
+    lng?: number;
 }
 
 interface MatchCardProps {
@@ -100,6 +103,8 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
                 <p className="mt-2 text-sm">
                     {isCancelled ? (
                         <span className="font-semibold text-accent-strong">{dict.match.cancelledNotice}</span>
+                    ) : match.status === 'completed' ? (
+                        <span className="font-medium text-charcoal/70">{dict.match.completedNotice}</span>
                     ) : isFull ? (
                         <span className="font-medium text-charcoal/70">{t.full}</span>
                     ) : (

@@ -30,7 +30,7 @@ interface MatchFormProps {
     minDate: string;
     matchId?: string;
     cancelHref: string;
-    dict: Pick<Dictionary, 'matchForm' | 'levels' | 'match'>;
+    dict: Pick<Dictionary, 'matchForm' | 'levels' | 'match' | 'recurring'>;
 }
 
 const PLAYERS_PER_FORMAT: Record<MatchFormat, number> = { '5v5': 10, '7v7': 14, '9v9': 18, '11v11': 22 };
@@ -51,6 +51,7 @@ export default function MatchForm({
         {},
     );
     const [maxPlayers, setMaxPlayers] = useState(String(initial.maxPlayers));
+    const [repeat, setRepeat] = useState(state.values?.repeat === 'on');
     // Tras un error, mostramos lo que el usuario había escrito en lugar de los valores iniciales.
     const v = (key: keyof MatchFormValues): string => state.values?.[key] ?? String(initial[key]);
     const fe = (field: keyof NonNullable<MatchFormState['fieldErrors']>) => {
@@ -214,6 +215,34 @@ export default function MatchForm({
                     ))}
                 </div>
             </fieldset>
+
+            {!editing && (
+                <fieldset className="rounded-xl bg-surface p-4">
+                    <label className="flex items-center gap-2 font-semibold">
+                        <input
+                            type="checkbox"
+                            name="repeat"
+                            checked={repeat}
+                            onChange={(e) => setRepeat(e.target.checked)}
+                            className="h-4 w-4 accent-primary-strong"
+                        />
+                        {dict.recurring.repeat}
+                    </label>
+                    {repeat && (
+                        <div className="mt-3 max-w-xs">
+                            <Field label={dict.recurring.weeks} htmlFor="weeks" hint={dict.recurring.hint}>
+                                <Select id="weeks" name="weeks" defaultValue={state.values?.weeks ?? '4'}>
+                                    {Array.from({ length: 11 }, (_, i) => i + 2).map((n) => (
+                                        <option key={n} value={n}>
+                                            {n}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </Field>
+                        </div>
+                    )}
+                </fieldset>
+            )}
 
             <Field label={t.description} htmlFor="description" error={fe('description')}>
                 <textarea

@@ -5,7 +5,7 @@ import MatchCard from '@/components/MatchCard';
 import { buttonStyles, PageHeader, Select } from '@/components/ui';
 import { isLocale } from '@/i18n/config';
 import { getDictionary, interpolate } from '@/i18n/dictionaries';
-import { pluralCategory } from '@/lib/format';
+import { formatMatchDate, pluralCategory } from '@/lib/format';
 import {
     listAreas,
     listMatches,
@@ -15,6 +15,8 @@ import {
     WHEN_OPTIONS,
 } from '@/lib/match-data';
 import { supabaseEnv } from '@/lib/supabase/env';
+import MatchesMapLoader from './MatchesMapLoader';
+import type { MapVenue } from './MatchesMap';
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/matches'>): Promise<Metadata> {
     const { lang } = await params;
@@ -36,6 +38,42 @@ export default async function MatchesPage({ params, searchParams }: PageProps<'/
 
     const configured = !!supabaseEnv();
     const [matches, areas] = configured ? await Promise.all([listMatches(filters), listAreas()]) : [[], []];
+    const query = await searchParams;
+    const viewHref = (view: 'list' | 'map') => {
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(query)) {
+            if (typeof value === 'string' && key !== 'view') params.set(key, value);
+        }
+        if (view === 'map') params.set('view', 'map');
+        const qs = params.toString();
+        return `/${lang}/matches${qs ? `?${qs}` : ''}`;
+    };
+    const mapVenues: MapVenue[] = [];
+    if (filters.view === 'map') {
+        const byVenue = new Map<string, MapVenue>();
+        for (const m of matches) {
+            if (!m.venueId || m.lat === undefined || m.lng === undefined) continue;
+            const entry = byVenue.get(m.venueId) ?? {
+                id: m.venueId,
+                name: m.venue,
+                lat: m.lat,
+                lng: m.lng,
+                matches: [],
+            };
+            const left = Math.max(m.spotsTotal - m.spotsTaken, 0);
+            entry.matches.push({
+                id: m.id,
+                title: m.title ?? m.venue,
+                when: formatMatchDate(m.startsAt, lang),
+                spots:
+                    left > 0
+                        ? interpolate(dict.matchCard.spotsLeft[pluralCategory(left, lang)], { count: left })
+                        : dict.matchCard.full,
+            });
+            byVenue.set(m.venueId, entry);
+        }
+        mapVenues.push(...byVenue.values());
+    }
     const hasFilters =
         filters.when !== 'upcoming' ||
         !!filters.area ||
@@ -56,6 +94,7 @@ export default async function MatchesPage({ params, searchParams }: PageProps<'/
                 method="get"
                 className="mt-8 grid gap-4 rounded-2xl bg-surface p-4 sm:grid-cols-2 lg:grid-cols-5 lg:items-end"
             >
+                {filters.view === 'map' && <input type="hidden" name="view" value="map" />}
                 <label className="text-sm font-semibold">
                     {t.when}
                     <Select name="when" defaultValue={filters.when} className="mt-1.5">
@@ -117,17 +156,49 @@ export default async function MatchesPage({ params, searchParams }: PageProps<'/
             </form>
 
             <div className="mt-8 flex items-center justify-between gap-4">
-                <p className="text-sm font-medium text-charcoal/70" aria-live="polite">
-                    {interpolate(t.count[pluralCategory(matches.length, lang)], { count: matches.length })}
-                </p>
-                {hasFilters && (
-                    <Link href={`/${lang}/matches`} className={`${buttonStyles.link} text-sm`}>
-                        {t.reset}
-                    </Link>
-                )}
+                <div className="flex items-center gap-4">
+                    <p className="text-sm font-medium text-charcoal/70" aria-live="polite">
+                        {interpolate(t.count[pluralCategory(matches.length, lang)], {
+                            count: matches.length,
+                        })}
+                    </p>
+                    {hasFilters && (
+                        <Link href={`/${lang}/matches`} className={`${buttonStyles.link} text-sm`}>
+                            {t.reset}
+                        </Link>
+                    )}
+                </div>
+                <nav
+                    aria-label={dict.mapView.title}
+                    className="flex rounded-lg bg-surface p-1 text-sm font-semibold"
+                >
+                    {(['list', 'map'] as const).map((view) => (
+                        <Link
+                            key={view}
+                            href={viewHref(view)}
+                            aria-current={filters.view === view ? 'page' : undefined}
+                            className={`rounded-md px-3 py-1.5 ${
+                                filters.view === view
+                                    ? 'bg-white shadow-sm'
+                                    : 'text-charcoal/70 hover:text-charcoal'
+                            }`}
+                        >
+                            {dict.mapView[view]}
+                        </Link>
+                    ))}
+                </nav>
             </div>
 
-            {matches.length > 0 ? (
+            {filters.view === 'map' && matches.length > 0 ? (
+                <div className="mt-4">
+                    <MatchesMapLoader
+                        venues={mapVenues}
+                        locale={lang}
+                        title={dict.mapView.title}
+                        openLabel={dict.mapView.openMatch}
+                    />
+                </div>
+            ) : matches.length > 0 ? (
                 <ul className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {matches.map((match) => (
                         <li key={match.id}>

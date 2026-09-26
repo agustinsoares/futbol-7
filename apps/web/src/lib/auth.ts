@@ -43,3 +43,9 @@ export function safeNextPath(next: string | null | undefined, locale: Locale): s
     if (next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\')) return next;
     return `/${locale}/matches`;
 }
+
+/** Exige sesión de administrador. Devuelve null si el usuario no es admin (la página muestra el aviso). */
+export async function requireAdmin(locale: Locale, nextPath: string): Promise<CurrentUser | null> {
+    const user = await requireUser(locale, nextPath);
+    return user.profile?.role === 'admin' ? user : null;
+}

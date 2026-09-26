@@ -3,15 +3,26 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Alert, buttonStyles } from '@/components/ui';
-import { isLocale } from '@/i18n/config';
+import { INTL_LOCALE, isLocale, type Locale } from '@/i18n/config';
 import { getDictionary, interpolate, type Dictionary } from '@/i18n/dictionaries';
 import { getCurrentUser } from '@/lib/auth';
 import { formatMatchDate, formatMatchDateRange, formatPrice, pluralCategory } from '@/lib/format';
-import { getMatchDetail, type Participant } from '@/lib/match-data';
+import {
+    getMatchDetail,
+    listMessages,
+    myRatings,
+    type ChatMessage,
+    type Participant,
+} from '@/lib/match-data';
 import { requestOrigin } from '@/lib/request-origin';
+import { TIME_ZONE } from '@/lib/site';
 import CancelMatchButton from './CancelMatchButton';
+import ChatPanel from './ChatPanel';
 import JoinLeaveForm from './JoinLeaveForm';
+import RatingsForm from './RatingsForm';
+import ResultForm from './ResultForm';
 import ShareButtons from './ShareButtons';
+import TeamsEditor from './TeamsEditor';
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/matches/[id]'>): Promise<Metadata> {
     const { lang, id } = await params;
@@ -38,10 +49,12 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/matches/[i
 function ParticipantList({
     people,
     hostId,
+    locale,
     dict,
 }: {
     people: Participant[];
     hostId: string;
+    locale: Locale;
     dict: Dictionary;
 }) {
     return (
@@ -59,7 +72,12 @@ function ParticipantList({
                     </span>
                     <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">
-                            {person.name}
+                            <Link
+                                href={`/${locale}/players/${person.userId}`}
+                                className="hover:text-primary-strong"
+                            >
+                                {person.name}
+                            </Link>
                             {person.userId === hostId && (
                                 <span className="ml-2 rounded bg-charcoal px-1.5 py-0.5 text-xs font-semibold text-white">
                                     {dict.match.hostBadge}
@@ -101,6 +119,25 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
     const myWaitlistIndex = user ? waitlist.findIndex((p) => p.userId === user.id) : -1;
     const isHost = user?.id === match.host_id;
     const canManage = isHost || user?.profile?.role === 'admin';
+    const isMember = !!user && (canManage || myConfirmed || myWaitlistIndex >= 0);
+    const completed = match.status === 'completed';
+    const [messages, given] = await Promise.all([
+        isMember ? listMessages(match.id) : Promise.resolve([] as ChatMessage[]),
+        completed && myConfirmed && user ? myRatings(match.id, user.id) : Promise.resolve({}),
+    ]);
+    const timeFormat = new Intl.DateTimeFormat(INTL_LOCALE[lang], {
+        timeZone: TIME_ZONE,
+        weekday: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    const timeLabels = Object.fromEntries(
+        messages.map((m) => [m.id, timeFormat.format(new Date(m.createdAt))]),
+    );
+    const teamA = confirmed.filter((p) => p.team === 'A');
+    const teamB = confirmed.filter((p) => p.team === 'B');
+    const hasTeams = teamA.length + teamB.length > 0;
+    const hasScore = match.score_a !== null && match.score_b !== null;
     const url = `${origin}/${lang}/matches/${match.id}`;
     const shortDate = formatMatchDate(match.starts_at, lang);
 
@@ -178,11 +215,18 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                 <p className="mt-2 text-charcoal/70">
                     {interpolate(t.hostedBy, { name: hostName })} · {venue.name}, {venue.area}
                 </p>
-                {match.visibility === 'private' && (
-                    <p className="mt-3 inline-block rounded-full bg-surface px-3 py-1 text-sm font-medium">
-                        {t.privateBadge}
-                    </p>
-                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {match.visibility === 'private' && (
+                        <p className="rounded-full bg-surface px-3 py-1 text-sm font-medium">
+                            {t.privateBadge}
+                        </p>
+                    )}
+                    {match.series_id && (
+                        <p className="rounded-full bg-primary-soft px-3 py-1 text-sm font-medium text-primary-strong">
+                            {dict.recurring.series}
+                        </p>
+                    )}
+                </div>
             </header>
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
@@ -211,7 +255,12 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                             </span>
                         </h2>
                         <div className="mt-3">
-                            <ParticipantList people={confirmed} hostId={match.host_id} dict={dict} />
+                            <ParticipantList
+                                people={confirmed}
+                                hostId={match.host_id}
+                                locale={lang}
+                                dict={dict}
+                            />
                         </div>
                     </section>
 
@@ -222,10 +271,141 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                                 <span className="font-medium text-charcoal/60">{waitlist.length}</span>
                             </h2>
                             <div className="mt-3">
-                                <ParticipantList people={waitlist} hostId={match.host_id} dict={dict} />
+                                <ParticipantList
+                                    people={waitlist}
+                                    hostId={match.host_id}
+                                    locale={lang}
+                                    dict={dict}
+                                />
                             </div>
                         </section>
                     )}
+
+                    {hasScore && (
+                        <section
+                            aria-labelledby="result-title"
+                            className="rounded-2xl bg-charcoal p-5 text-white"
+                        >
+                            <h2
+                                id="result-title"
+                                className="text-sm font-semibold tracking-wide text-white/70 uppercase"
+                            >
+                                {dict.result.title}
+                            </h2>
+                            <p className="mt-2 flex items-center justify-center gap-4 font-display text-3xl">
+                                <span className="font-sans text-base font-semibold">{dict.teams.teamA}</span>
+                                {match.score_a} – {match.score_b}
+                                <span className="font-sans text-base font-semibold">{dict.teams.teamB}</span>
+                            </p>
+                        </section>
+                    )}
+
+                    {(hasTeams || (canManage && !closed && confirmed.length >= 2)) && (
+                        <section aria-labelledby="teams-title">
+                            <h2 id="teams-title" className="text-xl font-bold">
+                                {dict.teams.title}
+                            </h2>
+                            <div className="mt-3">
+                                {canManage && !closed ? (
+                                    <TeamsEditor
+                                        locale={lang}
+                                        matchId={match.id}
+                                        dict={dict.teams}
+                                        players={confirmed.map((p) => ({
+                                            id: p.userId,
+                                            name: p.name,
+                                            level: p.level,
+                                            position: p.position,
+                                            team: p.team,
+                                        }))}
+                                    />
+                                ) : (
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        {[
+                                            { label: dict.teams.teamA, people: teamA },
+                                            { label: dict.teams.teamB, people: teamB },
+                                        ].map((team) => (
+                                            <div key={team.label} className="rounded-xl bg-surface p-4">
+                                                <p className="font-semibold">{team.label}</p>
+                                                <ul className="mt-2 space-y-1 text-sm">
+                                                    {team.people.map((p) => (
+                                                        <li key={p.userId}>{p.name}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    )}
+
+                    {canManage && started && match.status !== 'cancelled' && confirmed.length > 0 && (
+                        <section
+                            aria-labelledby="record-title"
+                            className="rounded-2xl border border-black/10 p-5"
+                        >
+                            <h2 id="record-title" className="text-xl font-bold">
+                                {hasScore ? dict.result.edit : dict.result.recordTitle}
+                            </h2>
+                            <div className="mt-3">
+                                <ResultForm
+                                    locale={lang}
+                                    matchId={match.id}
+                                    dict={dict}
+                                    initialScore={{ a: match.score_a, b: match.score_b }}
+                                    players={confirmed.map((p) => ({
+                                        id: p.userId,
+                                        name: p.name,
+                                        attended: p.attended,
+                                    }))}
+                                />
+                            </div>
+                        </section>
+                    )}
+
+                    {completed && myConfirmed && user && confirmed.length > 1 && (
+                        <section
+                            aria-labelledby="ratings-title"
+                            className="rounded-2xl border border-black/10 p-5"
+                        >
+                            <h2 id="ratings-title" className="text-xl font-bold">
+                                {dict.ratings.title}
+                            </h2>
+                            <div className="mt-3">
+                                <RatingsForm
+                                    locale={lang}
+                                    matchId={match.id}
+                                    dict={dict.ratings}
+                                    given={given}
+                                    players={confirmed
+                                        .filter((p) => p.userId !== user.id && p.attended !== false)
+                                        .map((p) => ({ id: p.userId, name: p.name }))}
+                                />
+                            </div>
+                        </section>
+                    )}
+
+                    <section aria-labelledby="chat-title">
+                        <h2 id="chat-title" className="text-xl font-bold">
+                            {dict.chat.title}
+                        </h2>
+                        <div className="mt-3">
+                            {isMember && user ? (
+                                <ChatPanel
+                                    locale={lang}
+                                    matchId={match.id}
+                                    messages={messages}
+                                    currentUserId={user.id}
+                                    canModerate={canManage}
+                                    timeLabels={timeLabels}
+                                    dict={dict.chat}
+                                />
+                            ) : (
+                                <p className="text-sm text-charcoal/60">{dict.chat.membersOnly}</p>
+                            )}
+                        </div>
+                    </section>
 
                     <section aria-labelledby="where-title">
                         <h2 id="where-title" className="text-xl font-bold">
