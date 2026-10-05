@@ -392,8 +392,10 @@ const en = {
         reminderSubject: 'Reminder: {title}, {when}',
         reminderGreeting: 'Hi {name},',
         reminderBody: "Just a reminder that you're playing {title} on {when} at {venue} ({address}).",
-        reminderCantMake: "Can't make it? Leave the match so someone on the waitlist can take your spot:",
-        reminderFooter: 'See you on the pitch! Aalto Football',
+        reminderCantMake: "Can't make it? Leave the match so someone on the waitlist can take your spot.",
+        reminderButton: 'Open the match',
+        reminderFooter: 'See you on the pitch!',
+        tagline: 'Pick-up football in Bergen',
     },
 };
 

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getDictionary, interpolate } from '@/i18n/dictionaries';
-import { escapeHtml, sendEmail } from '@/lib/email';
+import { renderEmailHtml, sendEmail } from '@/lib/email';
 import { formatMatchDateRange } from '@/lib/format';
 import { siteUrl } from '@/lib/site';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
@@ -42,22 +42,22 @@ export async function GET(request: NextRequest) {
             venue: reminder.venue_name,
             address: reminder.venue_address,
         };
-        const lines = [
-            interpolate(t.reminderGreeting, vars),
-            interpolate(t.reminderBody, vars),
-            `${t.reminderCantMake} ${url}`,
-            t.reminderFooter,
-        ];
+        const greeting = interpolate(t.reminderGreeting, vars);
+        const body = interpolate(t.reminderBody, vars);
         const result = await sendEmail({
             to: reminder.email,
             subject: interpolate(t.reminderSubject, vars),
-            text: lines.join('\n\n'),
-            html: lines
-                .map(
-                    (line) =>
-                        `<p>${escapeHtml(line).replace(escapeHtml(url), `<a href="${escapeHtml(url)}">${escapeHtml(url)}</a>`)}</p>`,
-                )
-                .join(''),
+            text: [greeting, body, `${t.reminderCantMake} ${url}`, `${t.reminderFooter} Aalto Football`].join(
+                '\n\n',
+            ),
+            html: renderEmailHtml({
+                lang: locale,
+                heading: greeting,
+                paragraphs: [body, t.reminderCantMake],
+                button: { label: t.reminderButton, url },
+                note: t.reminderFooter,
+                tagline: t.tagline,
+            }),
         });
         if (result.sent) sentIds.push(reminder.participant_id);
         else if (result.reason === 'not_configured') notConfigured++;
