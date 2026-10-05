@@ -20,12 +20,18 @@ It can be installed on a phone's home screen as a **PWA**.
 - **Game day:** balanced teams (by level, one goalkeeper per side), match chat for players, result and attendance (no-shows)
 - **After the match:** players rate each other (only averages are public) and every player has a profile with stats
 - **Weekly matches:** create a series of up to 12 weeks in one go
-- **Accounts:** forgot/reset password by email, change password from the profile
+- **Accounts:** forgot/reset password by email, change password from the profile, delete your account (GDPR)
+- **Legal:** privacy policy and terms of use in English and Norwegian (`/privacy`, `/terms`)
 - **Admin panel** (`/admin`, admins only): community stats, website traffic (Vercel Web Analytics), choose who else is admin, manage the pitches
 - **Daily job:** email reminders before kick-off and automatic "played" status (Vercel Cron + Resend)
 - **English and Norwegian (bokmål)**, installable **PWA** with offline page
 
 ---
+
+## 📚 Docs
+
+- [How the site works (Spanish)](docs/como-funciona.md)
+- [Security and privacy review (Spanish)](docs/seguridad.md)
 
 ## 🛠️ Stack
 
@@ -107,7 +113,9 @@ To set up a new project:
 
 Security model:
 
-- Everyone can read public matches, pitches and profiles. Private matches are only visible to the host, players in them and admins.
+- Visitors see public matches, pitches and how many spots are left. Names, profiles and who plays each match are only visible to signed-in users.
+- Private matches never appear in listings (not even through the API): only the host, its players and admins list them, and anyone with the link opens them with `get_match()`.
+- Limits against spam live in the database (30 new matches a day, 10 chat messages a minute per person).
 - Only admins manage pitches and change roles (from **Admin → Admins**; nobody can remove their own admin role).
 - Joining and leaving happen only through `join_match` / `leave_match`, which lock the match row so the last spot can't be taken twice, and move the first waitlisted player up when someone drops out.
 

@@ -5,6 +5,7 @@ import { Alert, buttonStyles, PageHeader } from '@/components/ui';
 import { isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { requireUser, safeNextPath } from '@/lib/auth';
+import DeleteAccount from './DeleteAccount';
 import ProfileForm from './ProfileForm';
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/profile'>): Promise<Metadata> {
@@ -49,6 +50,11 @@ export default async function ProfilePage({ params, searchParams }: PageProps<'/
                         {dict.password.change}
                     </Link>
                 </p>
+            )}
+            {!welcome && (
+                <div className="mt-10">
+                    <DeleteAccount locale={lang} dict={dict.account} />
+                </div>
             )}
         </section>
     );

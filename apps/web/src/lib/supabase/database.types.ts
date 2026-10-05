@@ -414,6 +414,27 @@ export type Database = {
                     venue_name: string;
                 }[];
             };
+            get_match: {
+                Args: { p_match_id: string };
+                Returns: Database['public']['Tables']['matches']['Row'][];
+            };
+            get_match_counts: {
+                Args: { p_match_id: string };
+                Returns: { confirmed: number; waitlisted: number }[];
+            };
+            get_match_players: {
+                Args: { p_match_id: string };
+                Returns: {
+                    attended: boolean | null;
+                    full_name: string;
+                    joined_at: string;
+                    preferred_position: Database['public']['Enums']['player_position'] | null;
+                    skill_level: Database['public']['Enums']['skill_level'] | null;
+                    status: Database['public']['Enums']['participant_status'];
+                    team: string | null;
+                    user_id: string;
+                }[];
+            };
             join_match: {
                 Args: { p_match_id: string };
                 Returns: Database['public']['Enums']['participant_status'];

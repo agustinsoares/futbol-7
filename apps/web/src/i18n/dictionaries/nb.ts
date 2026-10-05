@@ -89,6 +89,8 @@ const nb: Dictionary = {
         bannerCta: 'Arranger en kamp',
     },
     footer: {
+        privacy: 'Personvern',
+        terms: 'Vilkår',
         rights: 'Alle rettigheter forbeholdt.',
     },
     notFound: {
@@ -121,6 +123,10 @@ const nb: Dictionary = {
         signInLink: 'Logg inn',
         checkEmail: 'Sjekk innboksen: vi har sendt deg en lenke for å fortsette.',
         signOut: 'Logg ut',
+        agreePrefix: 'Ved å opprette en konto godtar du',
+        agreeTerms: 'vilkårene for bruk',
+        agreeMiddle: 'og bekrefter at du har lest',
+        agreePrivacy: 'personvernerklæringen',
         forgotLink: 'Glemt passordet?',
         errors: {
             invalidCredentials: 'Feil e-post eller passord.',
@@ -240,6 +246,7 @@ const nb: Dictionary = {
         leaveWaitlist: 'Gå av ventelisten',
         youAreIn: 'Du er med! Vi ses på banen.',
         youAreWaitlisted: 'Du er nr. {position} på ventelisten. Du rykker opp hvis en plass blir ledig.',
+        signInToSeePlayers: 'Logg inn for å se hvem som spiller.',
         signInToJoin: 'Logg inn for å melde deg på',
         cancelledNotice: 'Denne kampen er avlyst.',
         completedNotice: 'Denne kampen er spilt.',
@@ -462,6 +469,16 @@ const nb: Dictionary = {
         removeAdmin: 'Fjern admin',
         noResults: 'Fant ingen spillere.',
         roleError: 'Vi fikk ikke endret rollen. Prøv igjen.',
+    },
+    account: {
+        deleteTitle: 'Slett kontoen min',
+        deleteText:
+            'Dette sletter kontoen, profilen, vurderingene og chatmeldingene dine for godt. Du meldes av kommende kamper, og kamper du arrangerer slettes. Dette kan ikke angres.',
+        confirmLabel: 'Jeg forstår at kontoen og dataene mine blir slettet.',
+        confirmRequired: 'Kryss av i boksen for å bekrefte.',
+        deleteButton: 'Slett kontoen min',
+        deleteError: 'Vi fikk ikke slettet kontoen. Prøv igjen eller kontakt oss.',
+        deleted: 'Kontoen og dataene dine er slettet.',
     },
     emails: {
         reminderSubject: 'Påminnelse: {title}, {when}',

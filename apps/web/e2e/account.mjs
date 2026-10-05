@@ -151,6 +151,69 @@ async function latestEmail(to, since) {
     check(!(await admin.isVisible('button:has-text("Remove admin")')), 'admins cannot remove their own role');
     await admin.screenshot({ path: out('account-04-admin-users') });
 
+    console.log('Security and privacy');
+    const res = await fetch(`${B}/en`);
+    const csp = res.headers.get('content-security-policy') ?? '';
+    check(
+        csp.includes("frame-ancestors 'none'") && res.headers.get('x-frame-options') === 'DENY',
+        'anti-clickjacking headers',
+    );
+    check(res.headers.get('x-content-type-options') === 'nosniff', 'nosniff header');
+    check(!res.headers.get('x-powered-by'), 'no x-powered-by header');
+
+    const api = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (api && key) {
+        const rest = (path) =>
+            fetch(`${api}/rest/v1/${path}`, { headers: { apikey: key } }).then((r) => r.json());
+        const priv = await rest('matches?select=id&visibility=eq.private');
+        check(Array.isArray(priv) && priv.length === 0, 'API: anonymous cannot list private matches');
+        const profiles = await rest('profiles?select=full_name');
+        check(Array.isArray(profiles) && profiles.length === 0, 'API: anonymous cannot list player names');
+        const players = await rest('match_participants?select=user_id');
+        check(Array.isArray(players) && players.length === 0, 'API: anonymous cannot list who plays where');
+    } else {
+        console.log('  (skipping API checks: NEXT_PUBLIC_SUPABASE_URL / KEY not set)');
+    }
+
+    const redirectTo = await newPage(b);
+    await redirectTo.goto(`${B}/en/login?next=${encodeURIComponent('/\t/example.com')}`);
+    await redirectTo.fill('#email', 'player@aaltofootball.test');
+    await redirectTo.fill('#password', 'local-pass-123');
+    await redirectTo.click('form button[type=submit]:has-text("Sign in")');
+    await redirectTo.waitForURL((url) => url.pathname === '/en/matches', { waitUntil: 'commit' });
+    check(
+        new URL(redirectTo.url()).origin === new URL(B).origin,
+        'login ?next cannot send you to another site',
+    );
+
+    const legal = await newPage(b);
+    await legal.goto(`${B}/en`);
+    await legal.click('footer >> text=Privacy');
+    await legal.waitForSelector('h1:has-text("Privacy policy")');
+    check(await legal.isVisible('text=Datatilsynet'), 'privacy policy page');
+    await legal.goto(`${B}/nb/terms`);
+    check(await legal.isVisible('h1:has-text("Vilkår for bruk")'), 'terms page in Norwegian');
+    await legal.goto(`${B}/en/login?mode=signup`);
+    check(await legal.isVisible('text=By creating an account you accept the'), 'sign-up mentions the terms');
+
+    console.log('Delete account');
+    const leaver = await login(b, 'thea.kvamme@aaltofootball.test');
+    await leaver.goto(`${B}/en/profile`);
+    await leaver.click('summary:has-text("Delete my account")');
+    await leaver.click('button:has-text("Delete my account")');
+    check(!!(await leaver.waitForSelector('text=Tick the box to confirm.')), 'deletion needs confirmation');
+    await leaver.check('input[name=confirm]');
+    await leaver.click('button:has-text("Delete my account")');
+    await leaver.waitForSelector('text=Your account and data have been deleted.');
+    check(true, 'account is deleted and the user is signed out');
+    const gone = await newPage(b);
+    await gone.goto(`${B}/en/login`);
+    await gone.fill('#email', 'thea.kvamme@aaltofootball.test');
+    await gone.fill('#password', 'local-pass-123');
+    await gone.click('form button[type=submit]:has-text("Sign in")');
+    check(!!(await gone.waitForSelector('text=Wrong email or password.')), 'deleted account cannot sign in');
+
     await b.close();
     check(errors.length === 0, `no page errors${errors.length ? `: ${errors.join(' | ')}` : ''}`);
     console.log(failures ? `\n${failures} check(s) failed` : '\nAll account checks passed');

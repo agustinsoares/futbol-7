@@ -86,6 +86,8 @@ const en = {
         bannerCta: 'Host a match',
     },
     footer: {
+        privacy: 'Privacy',
+        terms: 'Terms',
         rights: 'All rights reserved.',
     },
     notFound: {
@@ -118,6 +120,10 @@ const en = {
         signInLink: 'Sign in',
         checkEmail: 'Check your inbox: we sent you a link to continue.',
         signOut: 'Sign out',
+        agreePrefix: 'By creating an account you accept the',
+        agreeTerms: 'terms of use',
+        agreeMiddle: 'and confirm you have read the',
+        agreePrivacy: 'privacy policy',
         forgotLink: 'Forgot your password?',
         errors: {
             invalidCredentials: 'Wrong email or password.',
@@ -237,6 +243,7 @@ const en = {
         leaveWaitlist: 'Leave the waitlist',
         youAreIn: "You're in! See you on the pitch.",
         youAreWaitlisted: "You're #{position} on the waitlist. We'll move you up if a spot frees up.",
+        signInToSeePlayers: 'Sign in to see who is playing.',
         signInToJoin: 'Sign in to join',
         cancelledNotice: 'This match has been cancelled.',
         completedNotice: 'This match has been played.',
@@ -458,6 +465,16 @@ const en = {
         removeAdmin: 'Remove admin',
         noResults: 'No players found.',
         roleError: "Couldn't change the role. Try again.",
+    },
+    account: {
+        deleteTitle: 'Delete my account',
+        deleteText:
+            'This permanently deletes your account, profile, ratings and chat messages. You will leave your upcoming matches, and matches you host will be deleted. This cannot be undone.',
+        confirmLabel: 'I understand that my account and data will be deleted.',
+        confirmRequired: 'Tick the box to confirm.',
+        deleteButton: 'Delete my account',
+        deleteError: "We couldn't delete your account. Try again or contact us.",
+        deleted: 'Your account and data have been deleted.',
     },
     emails: {
         reminderSubject: 'Reminder: {title}, {when}',

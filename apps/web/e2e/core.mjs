@@ -44,7 +44,12 @@ const check = (cond, msg) => {
     await p.waitForURL(/\/en\/matches\/[0-9a-f-]{36}$/);
     const indoorUrl = p.url();
     check(await p.isVisible('text=Sign in to join'), 'muestra "Sign in to join"');
-    check(await p.isVisible('text=Hosted by'), 'muestra el host');
+    check(!(await p.isVisible('text=Hosted by')), 'sin sesión no muestra nombres (host)');
+    check(
+        await p.isVisible('text=Sign in to see who is playing.'),
+        'sin sesión pide entrar para ver jugadores',
+    );
+    check(await p.isVisible('text=/\\d+\\/\\d+/'), 'sin sesión sí muestra las plazas ocupadas');
 
     log('3. Login con error y luego correcto');
     await p.click('text=Sign in to join');

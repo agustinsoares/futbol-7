@@ -110,6 +110,19 @@ export default function AuthForm({ mode, locale, next, dict, initialError, googl
                 <button type="submit" disabled={pending} className={`${buttonStyles.primary} w-full`}>
                     {mode === 'signin' ? dict.signInButton : dict.signUpButton}
                 </button>
+                {mode === 'signup' && (
+                    <p className="text-center text-xs text-charcoal/70">
+                        {dict.agreePrefix}{' '}
+                        <Link href={`/${locale}/terms`} className={buttonStyles.link} target="_blank">
+                            {dict.agreeTerms}
+                        </Link>{' '}
+                        {dict.agreeMiddle}{' '}
+                        <Link href={`/${locale}/privacy`} className={buttonStyles.link} target="_blank">
+                            {dict.agreePrivacy}
+                        </Link>
+                        .
+                    </p>
+                )}
                 {mode === 'signin' && (
                     <button
                         type="submit"

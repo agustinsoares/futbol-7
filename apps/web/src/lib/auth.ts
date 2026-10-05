@@ -38,10 +38,22 @@ export function isProfileComplete(profile: Profile | null): boolean {
     return !!profile && profile.full_name.trim().length >= 2 && profile.skill_level !== null;
 }
 
-/** Solo permite redirigir a rutas internas del sitio (evita open redirects). */
+/**
+ * Solo permite redirigir a rutas internas del sitio (evita open redirects).
+ * Se resuelve con URL, igual que haría el navegador: así "/\t/evil.com" o "/\\evil.com",
+ * que el navegador convierte en "//evil.com", también se rechazan.
+ */
 export function safeNextPath(next: string | null | undefined, locale: Locale): string {
-    if (next && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\')) return next;
-    return `/${locale}/matches`;
+    const fallback = `/${locale}/matches`;
+    if (!next || !next.startsWith('/') || /[\u0000-\u001f\\]/.test(next)) return fallback;
+    try {
+        const base = 'https://aalto.invalid';
+        const url = new URL(next, base);
+        if (url.origin !== base) return fallback;
+        return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+        return fallback;
+    }
 }
 
 /** Exige sesión de administrador. Devuelve null si el usuario no es admin (la página muestra el aviso). */
