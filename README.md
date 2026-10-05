@@ -117,6 +117,10 @@ Security model:
 - **Google sign-in (optional):** enable the Google provider in Supabase and set `NEXT_PUBLIC_AUTH_GOOGLE_ENABLED=true`.
 - **Emails:** Supabase's built-in email service is heavily rate-limited; configure custom SMTP before launch
   so confirmation and sign-in links reach everyone.
+- **Email templates:** branded English/Norwegian templates live in `supabase/templates/` (used automatically by
+  local Supabase). In production, paste them in **Authentication → Emails → Templates**:
+  `confirmation.html` → *Confirm sign up* and `magic_link.html` → *Magic link*. Their links use `token_hash`, so
+  they work even when opened on a different device or browser than the one used to sign up.
 
 ### Reminder emails and daily job
 

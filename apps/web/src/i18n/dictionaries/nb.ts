@@ -395,8 +395,10 @@ const nb: Dictionary = {
         reminderSubject: 'Påminnelse: {title}, {when}',
         reminderGreeting: 'Hei {name},',
         reminderBody: 'En liten påminnelse om at du spiller {title} {when} på {venue} ({address}).',
-        reminderCantMake: 'Kan du ikke likevel? Meld avbud, så kan noen på ventelisten ta plassen din:',
-        reminderFooter: 'Vi ses på banen! Aalto Football',
+        reminderCantMake: 'Kan du ikke likevel? Meld avbud, så kan noen på ventelisten ta plassen din.',
+        reminderButton: 'Åpne kampen',
+        reminderFooter: 'Vi ses på banen!',
+        tagline: 'Fotball for alle i Bergen',
     },
 };
 
