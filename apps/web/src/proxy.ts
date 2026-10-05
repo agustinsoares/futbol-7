@@ -27,5 +27,5 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
     // Excluye assets, APIs y archivos con extensión (sw.js, manifest, iconos, imágenes).
-    matcher: ['/((?!api|_next/static|_next/image|images|.*\\..*).*)'],
+    matcher: ['/((?!api|_next/static|_next/image|_vercel|images|.*\\..*).*)'],
 };

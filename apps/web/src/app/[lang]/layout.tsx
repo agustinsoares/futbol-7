@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
@@ -78,6 +79,8 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
                 <main className="flex-1">{children as ReactNode}</main>
                 <Footer locale={lang} dict={dict} />
                 <ServiceWorkerRegistration />
+                {/* Vercel Web Analytics: solo en Vercel (fuera de ahí su script no existe). */}
+                {process.env.VERCEL === '1' && <Analytics />}
             </body>
         </html>
     );

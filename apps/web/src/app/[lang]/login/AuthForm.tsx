@@ -100,6 +100,13 @@ export default function AuthForm({ mode, locale, next, dict, initialError, googl
                         aria-invalid={!!state.fieldErrors?.password}
                     />
                 </Field>
+                {mode === 'signin' && (
+                    <p className="-mt-2 text-right text-sm">
+                        <Link href={`/${locale}/forgot-password`} className={buttonStyles.link}>
+                            {dict.forgotLink}
+                        </Link>
+                    </p>
+                )}
                 <button type="submit" disabled={pending} className={`${buttonStyles.primary} w-full`}>
                     {mode === 'signin' ? dict.signInButton : dict.signUpButton}
                 </button>

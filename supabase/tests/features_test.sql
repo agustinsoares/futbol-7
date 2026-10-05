@@ -69,3 +69,19 @@ reset role;
 set role authenticated;
 select public.due_reminders();
 reset role;
+
+\echo '--- 9. admin panel: only admins see stats and users or change roles'
+set role authenticated; select pg_temp.act_as(:'player');
+select public.admin_stats();
+select public.set_user_role(:'player', 'admin');
+select pg_temp.act_as(:'admin');
+select (s->>'users_total')::int > 0 as has_users, jsonb_array_length(s->'weekly') as weeks from public.admin_stats() s;
+select count(*) as found from public.admin_list_users('player@aaltofootball');
+select public.set_user_role(:'player', 'admin');
+select public.set_user_role(:'admin', 'user');
+reset role;
+select role as player_role from public.profiles where id = :'player';
+set role authenticated; select pg_temp.act_as(:'admin');
+select public.set_user_role(:'player', 'user');
+reset role;
+select role as player_role from public.profiles where id = :'player';

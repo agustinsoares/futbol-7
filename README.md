@@ -20,7 +20,8 @@ It can be installed on a phone's home screen as a **PWA**.
 - **Game day:** balanced teams (by level, one goalkeeper per side), match chat for players, result and attendance (no-shows)
 - **After the match:** players rate each other (only averages are public) and every player has a profile with stats
 - **Weekly matches:** create a series of up to 12 weeks in one go
-- **Admin:** manage the pitches
+- **Accounts:** forgot/reset password by email, change password from the profile
+- **Admin panel** (`/admin`, admins only): community stats, website traffic (Vercel Web Analytics), choose who else is admin, manage the pitches
 - **Daily job:** email reminders before kick-off and automatic "played" status (Vercel Cron + Resend)
 - **English and Norwegian (bokmål)**, installable **PWA** with offline page
 
@@ -107,7 +108,7 @@ To set up a new project:
 Security model:
 
 - Everyone can read public matches, pitches and profiles. Private matches are only visible to the host, players in them and admins.
-- Only admins manage pitches and change roles.
+- Only admins manage pitches and change roles (from **Admin → Admins**; nobody can remove their own admin role).
 - Joining and leaving happen only through `join_match` / `leave_match`, which lock the match row so the last spot can't be taken twice, and move the first waitlisted player up when someone drops out.
 
 ### Auth settings (Supabase dashboard → Authentication → URL Configuration)
@@ -121,6 +122,7 @@ Security model:
   local Supabase). In production, paste them in **Authentication → Emails → Templates**:
   `confirmation.html` → *Confirm sign up* and `magic_link.html` → *Magic link*. Their links use `token_hash`, so
   they work even when opened on a different device or browser than the one used to sign up.
+  Also `recovery.html` → *Reset password* (subject `Reset your Aalto Football password`).
 
 ### Reminder emails and daily job
 
@@ -131,6 +133,15 @@ confirmed players whose match starts in the next 26 hours. Set these environment
 - `SUPABASE_SECRET_KEY`: the project's secret key (Project Settings → API keys). Server-only.
 - `RESEND_API_KEY` and `EMAIL_FROM` (e.g. `Aalto Football <hello@your-domain>`): without them, nothing is sent and
   reminders stay pending.
+
+### Analytics
+
+- **Enable it once:** Vercel → project → **Analytics** → *Enable* (Web Analytics, no cookies). The app already
+  includes the `<Analytics />` script, which only loads when running on Vercel.
+- **See it in the site:** `/admin` shows visitors, page views, top pages, countries, referrers and devices for the
+  last 30 days when `VERCEL_ANALYTICS_TOKEN`, `VERCEL_ANALYTICS_PROJECT_ID` and `VERCEL_ANALYTICS_TEAM_ID` are set in
+  Vercel (token from vercel.com/account/tokens, stored as *Sensitive*). Without them, the panel links to the
+  Vercel dashboard. The community numbers (players, matches, fill rate…) come from Supabase and need nothing.
 
 ## 🚀 Deploy on Vercel
 
@@ -152,6 +163,7 @@ confirmed players whose match starts in the next 26 hours. Set these environment
 - [x] Map view of matches
 - [x] Balanced teams, results, attendance, ratings and player profiles
 - [x] Weekly matches, match chat and pitch admin
+- [x] Password reset, admin panel with stats and analytics
 - [ ] Online payments (disabled for now)
 
 ## 🎨 Brand

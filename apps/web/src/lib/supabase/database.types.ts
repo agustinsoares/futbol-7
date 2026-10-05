@@ -386,6 +386,18 @@ export type Database = {
             };
         };
         Functions: {
+            admin_list_users: {
+                Args: { p_search?: string };
+                Returns: {
+                    created_at: string;
+                    email: string;
+                    full_name: string;
+                    id: string;
+                    last_sign_in_at: string | null;
+                    role: Database['public']['Enums']['user_role'];
+                }[];
+            };
+            admin_stats: { Args: Record<PropertyKey, never>; Returns: Json };
             complete_past_matches: { Args: Record<PropertyKey, never>; Returns: number };
             due_reminders: {
                 Args: Record<PropertyKey, never>;
@@ -429,6 +441,10 @@ export type Database = {
             };
             save_teams: {
                 Args: { p_match_id: string; p_team_a: string[]; p_team_b: string[] };
+                Returns: undefined;
+            };
+            set_user_role: {
+                Args: { p_role: Database['public']['Enums']['user_role']; p_user_id: string };
                 Returns: undefined;
             };
         };
