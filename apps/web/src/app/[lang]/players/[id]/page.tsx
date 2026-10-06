@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import MatchCard from '@/components/MatchCard';
 import { INTL_LOCALE, isLocale } from '@/i18n/config';
 import { getDictionary, interpolate } from '@/i18n/dictionaries';
+import { requireUser } from '@/lib/auth';
 import { pluralCategory } from '@/lib/format';
 import { getPlayer } from '@/lib/match-data';
 import { TIME_ZONE } from '@/lib/site';
@@ -17,6 +18,8 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/players/[i
 export default async function PlayerPage({ params }: PageProps<'/[lang]/players/[id]'>) {
     const { lang, id } = await params;
     if (!isLocale(lang)) notFound();
+    // Los perfiles solo los ven usuarios registrados.
+    await requireUser(lang, `/${lang}/players/${id}`);
     const [player, dict] = await Promise.all([getPlayer(id), getDictionary(lang)]);
     if (!player) notFound();
 

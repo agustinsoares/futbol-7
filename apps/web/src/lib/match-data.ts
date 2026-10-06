@@ -139,41 +139,50 @@ export interface Participant {
 export interface MatchDetail {
     match: Tables<'matches'>;
     venue: Venue;
-    hostName: string;
+    /** null para visitantes sin sesión: los nombres solo se muestran a usuarios registrados. */
+    hostName: string | null;
     confirmed: Participant[];
     waitlist: Participant[];
+    confirmedCount: number;
+    waitlistCount: number;
+    /** false si no hay sesión: se muestran las plazas, pero no quién juega. */
+    playersVisible: boolean;
     /** Ya empezó (calculado al cargar los datos, fuera del render). */
     hasStarted: boolean;
 }
 
+/**
+ * Detalle de un partido por su id. Usa get_match/get_match_players para que los partidos
+ * privados se puedan abrir con el enlace aunque no aparezcan en ningún listado.
+ */
 export async function getMatchDetail(id: string): Promise<MatchDetail | null> {
     if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
     const supabase = await createSupabaseServerClient();
 
-    const { data: match } = await supabase.from('matches').select('*').eq('id', id).maybeSingle();
+    const { data: matches } = await supabase.rpc('get_match', { p_match_id: id });
+    const match = matches?.[0];
     if (!match) return null;
 
-    const [{ data: venue }, { data: host }, { data: rows }] = await Promise.all([
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+    const [{ data: venue }, { data: counts }, host, players] = await Promise.all([
         supabase.from('venues').select('*').eq('id', match.venue_id).single(),
-        supabase.from('profiles').select('full_name').eq('id', match.host_id).maybeSingle(),
-        supabase
-            .from('match_participants')
-            .select(
-                'user_id, status, joined_at, team, attended, profiles(full_name, skill_level, preferred_position)',
-            )
-            .eq('match_id', id)
-            .in('status', ['confirmed', 'waitlisted'])
-            .order('joined_at', { ascending: true }),
+        supabase.rpc('get_match_counts', { p_match_id: id }),
+        user
+            ? supabase.from('profiles').select('full_name').eq('id', match.host_id).maybeSingle()
+            : Promise.resolve({ data: null }),
+        user ? supabase.rpc('get_match_players', { p_match_id: id }) : Promise.resolve({ data: null }),
     ]);
     if (!venue) return null;
 
-    const participants: Participant[] = (rows ?? []).map((row) => ({
+    const participants: Participant[] = (players.data ?? []).map((row) => ({
         userId: row.user_id,
         status: row.status,
         joinedAt: row.joined_at,
-        name: row.profiles?.full_name || '—',
-        level: row.profiles?.skill_level ?? null,
-        position: row.profiles?.preferred_position ?? null,
+        name: row.full_name || '—',
+        level: row.skill_level ?? null,
+        position: row.preferred_position ?? null,
         team: row.team === 'A' || row.team === 'B' ? row.team : null,
         attended: row.attended,
     }));
@@ -181,9 +190,12 @@ export async function getMatchDetail(id: string): Promise<MatchDetail | null> {
     return {
         match,
         venue,
-        hostName: host?.full_name || '—',
+        hostName: user ? host.data?.full_name || '—' : null,
         confirmed: participants.filter((p) => p.status === 'confirmed'),
         waitlist: participants.filter((p) => p.status === 'waitlisted'),
+        confirmedCount: counts?.[0]?.confirmed ?? 0,
+        waitlistCount: counts?.[0]?.waitlisted ?? 0,
+        playersVisible: !!user,
         hasStarted: new Date(match.starts_at).getTime() <= Date.now(),
     };
 }

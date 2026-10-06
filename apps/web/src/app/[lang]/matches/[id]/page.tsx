@@ -29,9 +29,9 @@ export async function generateMetadata({ params }: PageProps<'/[lang]/matches/[i
     if (!isLocale(lang)) return {};
     const detail = await getMatchDetail(id);
     if (!detail) return {};
-    const { match, venue, confirmed } = detail;
+    const { match, venue, confirmedCount } = detail;
     const dict = await getDictionary(lang);
-    const spotsLeft = Math.max(match.max_players - confirmed.length, 0);
+    const spotsLeft = Math.max(match.max_players - confirmedCount, 0);
     const description = `${formatMatchDate(match.starts_at, lang)} · ${venue.name} · ${
         spotsLeft > 0
             ? interpolate(dict.matchCard.spotsLeft[pluralCategory(spotsLeft, lang)], { count: spotsLeft })
@@ -112,8 +112,18 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
     if (!detail) notFound();
 
     const t = dict.match;
-    const { match, venue, confirmed, waitlist, hostName, hasStarted: started } = detail;
-    const spotsLeft = Math.max(match.max_players - confirmed.length, 0);
+    const {
+        match,
+        venue,
+        confirmed,
+        waitlist,
+        confirmedCount,
+        playersVisible,
+        hostName,
+        hasStarted: started,
+    } = detail;
+    const spotsLeft = Math.max(match.max_players - confirmedCount, 0);
+    const signInHref = `/${lang}/login?next=${encodeURIComponent(`/${lang}/matches/${match.id}`)}`;
     const closed = match.status === 'cancelled' || match.status === 'completed' || started;
     const myConfirmed = user ? confirmed.some((p) => p.userId === user.id) : false;
     const myWaitlistIndex = user ? waitlist.findIndex((p) => p.userId === user.id) : -1;
@@ -153,10 +163,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
     else if (started) joinBlock = <Alert tone="info">{t.startedNotice}</Alert>;
     else if (!user)
         joinBlock = (
-            <Link
-                href={`/${lang}/login?next=${encodeURIComponent(`/${lang}/matches/${match.id}`)}`}
-                className={`${buttonStyles.primary} w-full`}
-            >
+            <Link href={signInHref} className={`${buttonStyles.primary} w-full`}>
                 {t.signInToJoin}
             </Link>
         );
@@ -213,7 +220,8 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                 </p>
                 <h1 className="mt-2 text-3xl sm:text-4xl">{match.title}</h1>
                 <p className="mt-2 text-charcoal/70">
-                    {interpolate(t.hostedBy, { name: hostName })} · {venue.name}, {venue.area}
+                    {hostName ? `${interpolate(t.hostedBy, { name: hostName })} · ` : ''}
+                    {venue.name}, {venue.area}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                     {match.visibility === 'private' && (
@@ -251,20 +259,28 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                         <h2 id="players-title" className="text-xl font-bold">
                             {t.playersTitle}{' '}
                             <span className="font-medium text-charcoal/60">
-                                {confirmed.length}/{match.max_players}
+                                {confirmedCount}/{match.max_players}
                             </span>
                         </h2>
                         <div className="mt-3">
-                            <ParticipantList
-                                people={confirmed}
-                                hostId={match.host_id}
-                                locale={lang}
-                                dict={dict}
-                            />
+                            {playersVisible ? (
+                                <ParticipantList
+                                    people={confirmed}
+                                    hostId={match.host_id}
+                                    locale={lang}
+                                    dict={dict}
+                                />
+                            ) : (
+                                <p className="text-charcoal/70">
+                                    <Link href={signInHref} className={buttonStyles.link}>
+                                        {t.signInToSeePlayers}
+                                    </Link>
+                                </p>
+                            )}
                         </div>
                     </section>
 
-                    {waitlist.length > 0 && (
+                    {playersVisible && waitlist.length > 0 && (
                         <section aria-labelledby="waitlist-title">
                             <h2 id="waitlist-title" className="text-xl font-bold">
                                 {t.waitlistTitle}{' '}

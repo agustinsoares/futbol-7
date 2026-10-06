@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ComponentType, SVGProps } from 'react';
 import MatchCard from '@/components/MatchCard';
+import { Alert } from '@/components/ui';
 import {
     BallIcon,
     CalendarIcon,
@@ -34,14 +35,20 @@ function FeatureIcon({ icon: IconComponent }: { icon: IconType }) {
     );
 }
 
-export default async function HomePage({ params }: PageProps<'/[lang]'>) {
+export default async function HomePage({ params, searchParams }: PageProps<'/[lang]'>) {
     const { lang } = await params;
     if (!isLocale(lang)) notFound();
     const dict = await getDictionary(lang);
     const { matches, isExample } = await getUpcomingMatches(6);
+    const accountDeleted = (await searchParams).deleted === '1';
 
     return (
         <>
+            {accountDeleted && (
+                <div className="mx-auto max-w-6xl px-4 pt-6">
+                    <Alert tone="success">{dict.account.deleted}</Alert>
+                </div>
+            )}
             {/* Hero */}
             <section className="relative isolate overflow-hidden bg-charcoal">
                 <Image

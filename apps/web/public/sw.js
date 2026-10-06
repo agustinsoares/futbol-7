@@ -1,9 +1,11 @@
 // Service worker de Aalto Football (PWA).
 // - Páginas: primero la red; sin conexión, la última versión guardada o la página "offline".
+//   Solo se guardan páginas públicas (inicio y listado): nunca perfil, chat, admin ni partidos,
+//   para no dejar datos personales en el dispositivo (p. ej. un ordenador compartido).
 // - Assets con hash de Next, iconos e imágenes: primero la caché.
 // Cambia VERSION para invalidar las cachés en el próximo deploy.
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const PAGES_CACHE = `pages-${VERSION}`;
 const ASSETS_CACHE = `assets-${VERSION}`;
 const OFFLINE_PAGES = { en: '/en/offline', nb: '/nb/offline' };
@@ -36,11 +38,15 @@ function offlinePageFor(url) {
     return url.pathname.startsWith('/nb') ? OFFLINE_PAGES.nb : OFFLINE_PAGES.en;
 }
 
+const PUBLIC_PAGES = /^\/(en|nb)(\/matches)?\/?$/;
+
 async function networkFirstPage(request) {
     const cache = await caches.open(PAGES_CACHE);
     try {
         const response = await fetch(request);
-        if (response.ok) cache.put(request, response.clone());
+        const url = new URL(request.url);
+        if (response.ok && PUBLIC_PAGES.test(url.pathname) && !url.search)
+            cache.put(request, response.clone());
         return response;
     } catch {
         const cached = await cache.match(request);

@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE, LOCALES } from '@/i18n/config';
 import { cookies } from 'next/headers';
 import { safeNextPath } from '@/lib/auth';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export interface ProfileFormState {
@@ -74,4 +75,53 @@ export async function saveProfileAction(
     }
     if (parsed.data.locale !== currentLocale) redirect(`/${parsed.data.locale}/profile?saved=1`);
     return { saved: true };
+}
+
+export interface DeleteAccountState {
+    error?: 'confirm' | 'generic';
+}
+
+/**
+ * Borra la cuenta y todos sus datos (derecho de supresión del RGPD). Antes se baja de los
+ * partidos futuros para que entre la gente de la lista de espera. Los partidos que organiza
+ * y sus datos asociados se borran en cascada.
+ */
+export async function deleteAccountAction(
+    _prev: DeleteAccountState,
+    formData: FormData,
+): Promise<DeleteAccountState> {
+    const lang = String(formData.get('lang') ?? '');
+    const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
+    if (formData.get('confirm') !== 'yes') return { error: 'confirm' };
+
+    const supabase = await createSupabaseServerClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) redirect(`/${locale}/login?next=/${locale}/profile`);
+
+    const admin = createSupabaseAdminClient();
+    if (!admin) return { error: 'generic' };
+
+    const { data: mine } = await supabase
+        .from('match_participants')
+        .select('match_id')
+        .eq('user_id', user.id)
+        .in('status', ['confirmed', 'waitlisted']);
+    const ids = (mine ?? []).map((row) => row.match_id);
+    if (ids.length) {
+        const { data: upcoming } = await supabase
+            .from('matches')
+            .select('id')
+            .in('id', ids)
+            .in('status', ['open', 'full'])
+            .gt('starts_at', new Date().toISOString());
+        for (const match of upcoming ?? []) await supabase.rpc('leave_match', { p_match_id: match.id });
+    }
+
+    const { error } = await admin.auth.admin.deleteUser(user.id);
+    if (error) return { error: 'generic' };
+
+    await supabase.auth.signOut();
+    redirect(`/${locale}?deleted=1`);
 }

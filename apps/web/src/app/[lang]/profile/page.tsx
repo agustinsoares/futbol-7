@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Alert, PageHeader } from '@/components/ui';
+import { Alert, buttonStyles, PageHeader } from '@/components/ui';
 import { isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { requireUser, safeNextPath } from '@/lib/auth';
+import DeleteAccount from './DeleteAccount';
 import ProfileForm from './ProfileForm';
 
 export async function generateMetadata({ params }: PageProps<'/[lang]/profile'>): Promise<Metadata> {
@@ -42,6 +44,18 @@ export default async function ProfilePage({ params, searchParams }: PageProps<'/
                     <Alert tone="error">{dict.profile.errors.generic}</Alert>
                 )}
             </div>
+            {!welcome && (
+                <p className="mt-6 text-center text-sm">
+                    <Link href={`/${lang}/reset-password`} className={buttonStyles.link}>
+                        {dict.password.change}
+                    </Link>
+                </p>
+            )}
+            {!welcome && (
+                <div className="mt-10">
+                    <DeleteAccount locale={lang} dict={dict.account} />
+                </div>
+            )}
         </section>
     );
 }

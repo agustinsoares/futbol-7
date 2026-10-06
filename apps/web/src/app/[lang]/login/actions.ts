@@ -1,16 +1,13 @@
 'use server';
 
-import type { AuthError } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { DEFAULT_LOCALE, isLocale, type Locale } from '@/i18n/config';
-import type { Dictionary } from '@/i18n/dictionaries';
 import { isProfileComplete, safeNextPath } from '@/lib/auth';
+import { mapAuthError, type AuthErrorKey } from '@/lib/auth-errors';
 import { requestOrigin } from '@/lib/request-origin';
 import { supabaseEnv } from '@/lib/supabase/env';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-
-export type AuthErrorKey = keyof Dictionary['auth']['errors'];
 
 export interface AuthFormState {
     error?: AuthErrorKey;
@@ -23,28 +20,6 @@ export interface AuthFormState {
 const emailSchema = z.string().trim().toLowerCase().email();
 const passwordSchema = z.string().min(8).max(72);
 const nameSchema = z.string().trim().min(2).max(80);
-
-function mapAuthError(error: AuthError): AuthErrorKey {
-    switch (error.code) {
-        case 'invalid_credentials':
-            return 'invalidCredentials';
-        case 'email_not_confirmed':
-            return 'emailNotConfirmed';
-        case 'user_already_exists':
-        case 'email_exists':
-            return 'emailTaken';
-        case 'weak_password':
-            return 'weakPassword';
-        case 'over_request_rate_limit':
-        case 'over_email_send_rate_limit':
-            return 'rateLimited';
-        case 'email_address_invalid':
-        case 'validation_failed':
-            return 'invalidEmail';
-        default:
-            return 'generic';
-    }
-}
 
 function readCommon(formData: FormData) {
     const lang = String(formData.get('lang') ?? '');

@@ -122,7 +122,7 @@ export default function UserMenu({ locale, dict }: { locale: Locale; dict: Dicti
                     {dict.profile}
                 </Link>
                 {user.isAdmin && (
-                    <Link href={`/${locale}/admin/venues`} className={itemClass}>
+                    <Link href={`/${locale}/admin`} className={itemClass}>
                         {dict.admin}
                     </Link>
                 )}

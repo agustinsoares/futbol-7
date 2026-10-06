@@ -98,6 +98,7 @@ jobs:
         run: |
           npx next start -p 3000 > /tmp/next.log 2>&1 &
           npx wait-on -t 60000 http://localhost:3000/en
+          set -a; . ./.env.local; set +a
           npm run test:e2e
       - name: Upload screenshots and server log
         if: always()

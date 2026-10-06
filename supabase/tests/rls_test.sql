@@ -10,7 +10,7 @@ select id as m_full from matches where title='Lunchtime futsal-style 5s' \gset
 select id as m_priv from matches where title like 'Friends only%' \gset
 select id as m_past from matches where title='Last week''s 7s' \gset
 
-\echo '--- 1. anon: sees public and private (link-only) rows; listings filter by visibility in the app'
+\echo '--- 1. anon: sees only public rows (private matches open with get_match and the link)'
 set role anon;
 select count(*) filter (where visibility='public') pub, count(*) filter (where visibility='private') priv from match_listings;
 reset role;
@@ -52,7 +52,7 @@ where u.id <> (select host_id from public.matches where id = :'m_priv')
   and u.id not in (select user_id from public.match_participants where match_id = :'m_priv')
   and u.email not like 'admin%' limit 1 \gset
 set role authenticated; select set_config('request.jwt.claim.sub', :'outsider', false);
-select count(*) as priv_visible from public.matches where id = :'m_priv';
+select count(*) as priv_by_link from public.get_match(:'m_priv');
 select join_match(:'m_priv');
 \echo '--- 10. anon cannot call join_match (expect permission denied)'
 reset role; set role anon;
