@@ -129,6 +129,11 @@ async function latestEmail(to, since) {
         await admin.isVisible('text=Connect Vercel Web Analytics'),
         'traffic explains how to connect Vercel Analytics',
     );
+    const chart = admin.locator('figure').first();
+    const bars = chart.locator('[tabindex="0"]');
+    await bars.last().hover();
+    check(await bars.last().locator('[role=tooltip]').isVisible(), 'hovering a bar shows its value');
+    check((await chart.locator('.border-dashed').count()) === 1, 'dashed line marks the highest bar');
     await admin.screenshot({ path: out('account-03-admin-overview'), fullPage: true });
 
     await admin.click('nav[aria-label=Admin] >> text=Admins');
