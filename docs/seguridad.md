@@ -27,6 +27,7 @@ Todo esto está cubierto por tests:
 - RLS activado en todas las tablas. Nadie puede darse rol de admin: lo impide un trigger en la base.
 - Apuntarse y bajarse pasa por funciones que bloquean la fila, así que no se puede "sobrevender" la última plaza.
 - Las valoraciones individuales son privadas, el chat solo lo leen los miembros del partido y las funciones de admin comprueban el rol en la base.
+- Security Advisor de Supabase: las funciones con permisos elevados viven en el esquema `private` (que la API no publica); en `public` solo hay envoltorios sin permisos elevados. Queda solo el aviso de *Leaked password protection*, que se activa en el panel.
 - La clave secreta de Supabase solo se usa en el servidor (la tarea diaria y el borrado de cuentas). La tarea diaria exige `CRON_SECRET`.
 - No hay secretos en el historial de git. `npm audit`: 0 vulnerabilidades.
 - React escapa todo el texto, no hay HTML inyectado y los popups del mapa escapan los textos. Next.js protege las acciones del servidor contra CSRF.
