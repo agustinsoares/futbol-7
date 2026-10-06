@@ -93,32 +93,72 @@ function BarList({
     );
 }
 
-/** Columnas verticales simples (sin librerías) para series cortas. */
+/**
+ * Columnas verticales simples (sin librerías) para series cortas.
+ * Al pasar el ratón (o con el foco) cada columna muestra su valor; una línea discontinua
+ * marca la altura de la más alta, con su valor a la izquierda.
+ */
 function Columns({
     rows,
     label,
+    format = String,
 }: {
-    rows: { label: string; value: number; title: string }[];
+    rows: { label: string; value: number; detail: string }[];
     label: string;
+    format?: (n: number) => string;
 }) {
-    const max = Math.max(...rows.map((r) => r.value), 1);
+    const maxValue = Math.max(0, ...rows.map((r) => r.value));
+    const scale = Math.max(maxValue, 1);
     return (
-        <figure>
-            <div className="flex h-32 items-end gap-1" role="img" aria-label={label}>
-                {rows.map((row) => (
+        <figure aria-label={label}>
+            <div className="relative flex h-32 pl-8">
+                {maxValue > 0 && (
                     <div
-                        key={row.label}
-                        className="flex h-full flex-1 flex-col justify-end"
-                        title={row.title}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-x-0 top-0 flex -translate-y-1/2 items-center"
                     >
-                        <div
-                            className="min-h-0.5 rounded-t bg-primary"
-                            style={{ height: `${(row.value / max) * 100}%` }}
-                        />
+                        <span className="w-8 shrink-0 pr-1.5 text-right text-xs text-charcoal/60 tabular-nums">
+                            {format(maxValue)}
+                        </span>
+                        <span className="flex-1 border-t border-dashed border-charcoal/50" />
                     </div>
-                ))}
+                )}
+                <div className="flex flex-1 items-end gap-1">
+                    {rows.map((row, i) => {
+                        const height = `${(row.value / scale) * 100}%`;
+                        const align =
+                            i === 0
+                                ? 'left-0'
+                                : i === rows.length - 1
+                                  ? 'right-0'
+                                  : 'left-1/2 -translate-x-1/2';
+                        return (
+                            <div
+                                key={row.label}
+                                tabIndex={0}
+                                aria-label={`${row.detail}: ${format(row.value)}`}
+                                className="group relative flex h-full flex-1 flex-col justify-end rounded-t outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                            >
+                                <div
+                                    className="min-h-0.5 rounded-t bg-primary transition-colors group-hover:bg-primary-strong group-focus-visible:bg-primary-strong"
+                                    style={{ height }}
+                                />
+                                <div
+                                    role="tooltip"
+                                    className={`pointer-events-none absolute z-20 mb-1.5 rounded-md bg-charcoal px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${align}`}
+                                    style={{ bottom: height }}
+                                >
+                                    <span className="block text-sm font-semibold tabular-nums">
+                                        {format(row.value)}
+                                    </span>
+                                    <span className="block text-white/70">{row.detail}</span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-            <figcaption className="mt-2 flex justify-between text-xs text-charcoal/60">
+            <figcaption className="mt-2 flex justify-between pl-8 text-xs text-charcoal/60">
                 <span>{rows[0]?.label}</span>
                 <span>{rows.at(-1)?.label}</span>
             </figcaption>
@@ -159,10 +199,11 @@ async function TrafficSection({ locale, t }: { locale: Locale; t: Dictionary['ad
                 <Panel title={t.pageviews}>
                     <Columns
                         label={t.pageviews}
+                        format={fmt.format}
                         rows={traffic.daily.map((d) => ({
                             label: shortDate(d.key, locale),
                             value: d.pageviews,
-                            title: `${shortDate(d.key, locale)}: ${fmt.format(d.pageviews)}`,
+                            detail: shortDate(d.key, locale),
                         }))}
                     />
                 </Panel>
@@ -234,20 +275,22 @@ export default async function AdminOverviewPage({ params }: PageProps<'/[lang]/a
                         <Panel title={t.newPlayers} subtitle={t.weekly}>
                             <Columns
                                 label={`${t.newPlayers}, ${t.weekly}`}
+                                format={fmt.format}
                                 rows={stats.weekly.map((w) => ({
                                     label: shortDate(w.week, lang),
                                     value: w.users,
-                                    title: `${interpolate(t.weekOf, { date: shortDate(w.week, lang) })}: ${w.users}`,
+                                    detail: interpolate(t.weekOf, { date: shortDate(w.week, lang) }),
                                 }))}
                             />
                         </Panel>
                         <Panel title={t.matches} subtitle={t.weekly}>
                             <Columns
                                 label={`${t.matches}, ${t.weekly}`}
+                                format={fmt.format}
                                 rows={stats.weekly.map((w) => ({
                                     label: shortDate(w.week, lang),
                                     value: w.matches,
-                                    title: `${interpolate(t.weekOf, { date: shortDate(w.week, lang) })}: ${w.matches}`,
+                                    detail: interpolate(t.weekOf, { date: shortDate(w.week, lang) }),
                                 }))}
                             />
                         </Panel>
