@@ -55,7 +55,7 @@ export default function ResultForm({ locale, matchId, players, initialScore, dic
             </div>
             <fieldset>
                 <legend className="text-sm font-semibold">{t.attendance}</legend>
-                <p className="text-sm text-charcoal/60">{t.attendanceHint}</p>
+                <p className="text-sm text-ink/60">{t.attendanceHint}</p>
                 <ul className="mt-2 grid gap-1 sm:grid-cols-2">
                     {players.map((player) => (
                         <li key={player.id}>

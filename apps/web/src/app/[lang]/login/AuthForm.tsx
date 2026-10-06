@@ -111,7 +111,7 @@ export default function AuthForm({ mode, locale, next, dict, initialError, googl
                     {mode === 'signin' ? dict.signInButton : dict.signUpButton}
                 </button>
                 {mode === 'signup' && (
-                    <p className="text-center text-xs text-charcoal/70">
+                    <p className="text-center text-xs text-ink/70">
                         {dict.agreePrefix}{' '}
                         <Link href={`/${locale}/terms`} className={buttonStyles.link} target="_blank">
                             {dict.agreeTerms}
@@ -138,7 +138,7 @@ export default function AuthForm({ mode, locale, next, dict, initialError, googl
 
             {googleEnabled && (
                 <>
-                    <div className="flex items-center gap-3 text-sm text-charcoal/60">
+                    <div className="flex items-center gap-3 text-sm text-ink/60">
                         <span className="h-px flex-1 bg-black/10" />
                         {dict.or}
                         <span className="h-px flex-1 bg-black/10" />
@@ -154,7 +154,7 @@ export default function AuthForm({ mode, locale, next, dict, initialError, googl
                 </>
             )}
 
-            <p className="text-center text-sm text-charcoal/70">
+            <p className="text-center text-sm text-ink/70">
                 {mode === 'signin' ? dict.noAccount : dict.haveAccount}{' '}
                 <Link href={otherHref} className={buttonStyles.link}>
                     {mode === 'signin' ? dict.createAccount : dict.signInLink}

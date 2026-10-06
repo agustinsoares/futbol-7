@@ -61,7 +61,7 @@ export default async function AdminUsersPage({ params, searchParams }: PageProps
                     <Alert tone="error">{t.roleError}</Alert>
                 </div>
             )}
-            {users && users.length === 0 && <p className="mt-8 text-charcoal/70">{t.noResults}</p>}
+            {users && users.length === 0 && <p className="mt-8 text-ink/70">{t.noResults}</p>}
             {users && users.length > 0 && (
                 <ul className="mt-6 divide-y divide-black/5 rounded-2xl border border-black/5 bg-white shadow-sm">
                     {users.map((user) => {
@@ -76,7 +76,7 @@ export default async function AdminUsersPage({ params, searchParams }: PageProps
                                     <p className="font-semibold">
                                         {user.full_name || user.email}
                                         {isSelf && (
-                                            <span className="font-normal text-charcoal/60"> ({t.you})</span>
+                                            <span className="font-normal text-ink/60"> ({t.you})</span>
                                         )}
                                         {isAdmin && (
                                             <span className="ml-2 rounded-md bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary-strong">
@@ -84,7 +84,7 @@ export default async function AdminUsersPage({ params, searchParams }: PageProps
                                             </span>
                                         )}
                                     </p>
-                                    <p className="truncate text-sm text-charcoal/60">
+                                    <p className="truncate text-sm text-ink/60">
                                         {user.email} ·{' '}
                                         {user.last_sign_in_at
                                             ? interpolate(t.lastSeen, {

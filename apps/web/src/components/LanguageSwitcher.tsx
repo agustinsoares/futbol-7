@@ -35,7 +35,7 @@ export default function LanguageSwitcher({ current, label }: { current: Locale; 
                             document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
                         }}
                         className={`rounded-md px-2 py-1 uppercase transition-colors ${
-                            active ? 'bg-white text-charcoal' : 'text-white/80 hover:text-white'
+                            active ? 'bg-white text-ink' : 'text-white/80 hover:text-white'
                         }`}
                     >
                         {locale === 'nb' ? 'NO' : 'EN'}

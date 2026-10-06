@@ -61,7 +61,7 @@ function ParticipantList({
         <ol className="divide-y divide-black/5">
             {people.map((person, index) => (
                 <li key={person.userId} className="flex items-center gap-3 py-2.5">
-                    <span className="w-6 text-right text-sm text-charcoal/50 tabular-nums">{index + 1}</span>
+                    <span className="w-6 text-right text-sm text-ink/50 tabular-nums">{index + 1}</span>
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary-strong">
                         {person.name
                             .split(/\s+/)
@@ -79,12 +79,12 @@ function ParticipantList({
                                 {person.name}
                             </Link>
                             {person.userId === hostId && (
-                                <span className="ml-2 rounded bg-charcoal px-1.5 py-0.5 text-xs font-semibold text-white">
+                                <span className="ml-2 rounded bg-ink px-1.5 py-0.5 text-xs font-semibold text-white">
                                     {dict.match.hostBadge}
                                 </span>
                             )}
                         </span>
-                        <span className="block text-sm text-charcoal/60">
+                        <span className="block text-sm text-ink/60">
                             {[
                                 person.level && dict.levels[person.level],
                                 person.position && dict.profile.positions[person.position],
@@ -95,7 +95,7 @@ function ParticipantList({
                     </span>
                 </li>
             ))}
-            {people.length === 0 && <li className="py-3 text-sm text-charcoal/60">{dict.match.noPlayers}</li>}
+            {people.length === 0 && <li className="py-3 text-sm text-ink/60">{dict.match.noPlayers}</li>}
         </ol>
     );
 }
@@ -219,7 +219,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                     </time>
                 </p>
                 <h1 className="mt-2 text-3xl sm:text-4xl">{match.title}</h1>
-                <p className="mt-2 text-charcoal/70">
+                <p className="mt-2 text-ink/70">
                     {hostName ? `${interpolate(t.hostedBy, { name: hostName })} · ` : ''}
                     {venue.name}, {venue.area}
                 </p>
@@ -242,23 +242,21 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                     <dl className="grid grid-cols-2 gap-4 rounded-2xl bg-surface p-5 sm:grid-cols-4">
                         {facts.map((fact) => (
                             <div key={fact.label}>
-                                <dt className="text-sm text-charcoal/60">{fact.label}</dt>
+                                <dt className="text-sm text-ink/60">{fact.label}</dt>
                                 <dd className="font-semibold">{fact.value}</dd>
                             </div>
                         ))}
                     </dl>
 
                     {match.description && (
-                        <p className="whitespace-pre-line text-charcoal/85">{match.description}</p>
+                        <p className="whitespace-pre-line text-ink/85">{match.description}</p>
                     )}
-                    {match.price_per_player != null && (
-                        <p className="text-sm text-charcoal/70">{t.payAtPitch}</p>
-                    )}
+                    {match.price_per_player != null && <p className="text-sm text-ink/70">{t.payAtPitch}</p>}
 
                     <section aria-labelledby="players-title">
                         <h2 id="players-title" className="text-xl font-bold">
                             {t.playersTitle}{' '}
-                            <span className="font-medium text-charcoal/60">
+                            <span className="font-medium text-ink/60">
                                 {confirmedCount}/{match.max_players}
                             </span>
                         </h2>
@@ -271,7 +269,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                                     dict={dict}
                                 />
                             ) : (
-                                <p className="text-charcoal/70">
+                                <p className="text-ink/70">
                                     <Link href={signInHref} className={buttonStyles.link}>
                                         {t.signInToSeePlayers}
                                     </Link>
@@ -284,7 +282,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                         <section aria-labelledby="waitlist-title">
                             <h2 id="waitlist-title" className="text-xl font-bold">
                                 {t.waitlistTitle}{' '}
-                                <span className="font-medium text-charcoal/60">{waitlist.length}</span>
+                                <span className="font-medium text-ink/60">{waitlist.length}</span>
                             </h2>
                             <div className="mt-3">
                                 <ParticipantList
@@ -298,10 +296,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                     )}
 
                     {hasScore && (
-                        <section
-                            aria-labelledby="result-title"
-                            className="rounded-2xl bg-charcoal p-5 text-white"
-                        >
+                        <section aria-labelledby="result-title" className="rounded-2xl bg-ink p-5 text-white">
                             <h2
                                 id="result-title"
                                 className="text-sm font-semibold tracking-wide text-white/70 uppercase"
@@ -418,7 +413,7 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                                     dict={dict.chat}
                                 />
                             ) : (
-                                <p className="text-sm text-charcoal/60">{dict.chat.membersOnly}</p>
+                                <p className="text-sm text-ink/60">{dict.chat.membersOnly}</p>
                             )}
                         </div>
                     </section>
@@ -428,8 +423,8 @@ export default async function MatchPage({ params }: PageProps<'/[lang]/matches/[
                             {t.where}
                         </h2>
                         <p className="mt-2 font-medium">{venue.name}</p>
-                        <p className="text-charcoal/70">{venue.address}</p>
-                        <p className="mt-1 text-sm text-charcoal/70">
+                        <p className="text-ink/70">{venue.address}</p>
+                        <p className="mt-1 text-sm text-ink/70">
                             {[
                                 t.surfaces[venue.surface],
                                 venue.has_changing_rooms && t.changingRooms,

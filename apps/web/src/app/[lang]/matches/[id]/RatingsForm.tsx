@@ -21,7 +21,7 @@ export default function RatingsForm({ locale, matchId, players, given, dict }: R
         <form action={action} className="space-y-4">
             <input type="hidden" name="lang" value={locale} />
             <input type="hidden" name="matchId" value={matchId} />
-            <p className="text-sm text-charcoal/70">{dict.hint}</p>
+            <p className="text-sm text-ink/70">{dict.hint}</p>
             {state.ok && <Alert tone="success">{dict.saved}</Alert>}
             {state.error && <Alert tone="error">{dict.errors.generic}</Alert>}
             <ul className="divide-y divide-black/5">

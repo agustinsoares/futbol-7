@@ -54,12 +54,19 @@ export default async function MyMatchesPage({ params }: PageProps<'/[lang]/my-ma
                                         locale={lang}
                                         dict={dict}
                                         badge={badge(item.role)}
+                                        badgeTone={
+                                            item.role === 'host'
+                                                ? 'brand'
+                                                : item.role === 'waitlisted'
+                                                  ? 'warning'
+                                                  : 'success'
+                                        }
                                     />
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <p className="mt-3 text-charcoal/70">{section.empty}</p>
+                        <p className="mt-3 text-ink/70">{section.empty}</p>
                     )}
                 </div>
             ))}

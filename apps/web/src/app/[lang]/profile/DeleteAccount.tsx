@@ -12,7 +12,7 @@ export default function DeleteAccount({ locale, dict }: { locale: Locale; dict: 
         <details className="rounded-2xl border border-accent-strong/20 bg-white p-6 shadow-sm">
             <summary className="cursor-pointer font-semibold text-accent-strong">{dict.deleteTitle}</summary>
             <form action={action} className="mt-4 space-y-4">
-                <p className="text-sm text-charcoal/80">{dict.deleteText}</p>
+                <p className="text-sm text-ink/80">{dict.deleteText}</p>
                 {state.error && (
                     <Alert tone="error">
                         {state.error === 'confirm' ? dict.confirmRequired : dict.deleteError}

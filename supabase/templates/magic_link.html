@@ -6,31 +6,31 @@
 <meta name="color-scheme" content="light">
 <title>Aalto Football</title>
 </head>
-<body style="margin:0;padding:0;background:#f5f5f5;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;">
+<body style="margin:0;padding:0;background:#f3f5f8;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f5f8;">
 <tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#333333;">
-<tr><td style="background:#333333;padding:20px 32px;border-bottom:4px solid #ff6d00;">
-<span style="font-size:20px;font-weight:bold;letter-spacing:2px;color:#ffffff;"><span style="color:#2979ff;">AALTO</span> FOOTBALL</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#1a2233;">
+<tr><td style="background:#00205b;padding:18px 32px;border-bottom:4px solid #ba0c2f;">
+<img src="{{ .SiteURL }}/icons/icon-192.png" width="36" height="36" alt="" style="vertical-align:middle;border:0;margin-right:10px;"><span style="vertical-align:middle;font-size:20px;font-weight:bold;letter-spacing:2px;color:#ffffff;">AALTO <span style="color:#c9d3ea;">FOOTBALL</span></span>
 </td></tr>
 <tr><td style="padding:32px;">
 {{ if eq .Data.locale "nb" }}
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#333333;">Logg inn på Aalto Football</h1>
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#1a2233;">Logg inn på Aalto Football</h1>
 <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">Trykk på knappen for å logge inn. Du trenger ikke passord.</p>
-<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#2979ff;">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#ba0c2f;">
 <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:8px;">Logg inn</a>
 </td></tr></table>
 <p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#666666;">Lenken er gyldig i én time. Ba du ikke om å logge inn, kan du se bort fra denne e-posten.</p>
 {{ else }}
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#333333;">Sign in to Aalto Football</h1>
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#1a2233;">Sign in to Aalto Football</h1>
 <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">Tap the button to sign in. No password needed.</p>
-<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#2979ff;">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#ba0c2f;">
 <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:8px;">Sign in</a>
 </td></tr></table>
 <p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#666666;">The link is valid for one hour. If you didn't ask to sign in, you can ignore this email.</p>
 {{ end }}
 </td></tr>
-<tr><td style="padding:20px 32px;background:#f5f5f5;font-size:12px;line-height:1.5;color:#888888;">
+<tr><td style="padding:20px 32px;background:#f3f5f8;font-size:12px;line-height:1.5;color:#888888;">
 Aalto Football · {{ if eq .Data.locale "nb" }}Fotball for alle i Bergen{{ else }}Pick-up football in Bergen{{ end }}
 </td></tr>
 </table>

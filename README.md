@@ -32,6 +32,7 @@ It can be installed on a phone's home screen as a **PWA**.
 
 - [How the site works (Spanish)](docs/como-funciona.md)
 - [Security and privacy review (Spanish)](docs/seguridad.md)
+- [Brand: logo and colours (Spanish)](docs/marca.md)
 
 ## 🛠️ Stack
 
@@ -176,7 +177,7 @@ confirmed players whose match starts in the next 26 hours. Set these environment
 
 ## 🎨 Brand
 
-Colours, typography and tone: [`docs/football_league_branding.md`](docs/football_league_branding.md).
+Logo, colours, typography and tone (Spanish): [`docs/marca.md`](docs/marca.md).
 
 ## 📄 License
 

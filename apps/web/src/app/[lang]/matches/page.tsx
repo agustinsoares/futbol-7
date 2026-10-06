@@ -157,7 +157,7 @@ export default async function MatchesPage({ params, searchParams }: PageProps<'/
 
             <div className="mt-8 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <p className="text-sm font-medium text-charcoal/70" aria-live="polite">
+                    <p className="text-sm font-medium text-ink/70" aria-live="polite">
                         {interpolate(t.count[pluralCategory(matches.length, lang)], {
                             count: matches.length,
                         })}
@@ -178,9 +178,7 @@ export default async function MatchesPage({ params, searchParams }: PageProps<'/
                             href={viewHref(view)}
                             aria-current={filters.view === view ? 'page' : undefined}
                             className={`rounded-md px-3 py-1.5 ${
-                                filters.view === view
-                                    ? 'bg-white shadow-sm'
-                                    : 'text-charcoal/70 hover:text-charcoal'
+                                filters.view === view ? 'bg-white shadow-sm' : 'text-ink/70 hover:text-ink'
                             }`}
                         >
                             {dict.mapView[view]}

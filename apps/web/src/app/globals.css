@@ -1,19 +1,31 @@
 @import 'tailwindcss';
 
 /*
- * Tokens de marca (ver docs/football_league_branding.md).
- * Las variantes "-strong" existen para texto sobre blanco y botones:
- * el azul y el naranja de marca no llegan al contraste AA (4.5:1) con texto pequeño.
+ * Paleta de marca (ver docs/marca.md): azul fiordo como base de confianza, rojo bandera
+ * solo para la acción (botones, urgencia, errores) y verde césped para confirmar.
+ * Regla 60-30-10: blancos y bruma de fondo, azul en la identidad, rojo en lo que se clickea.
  */
 @theme {
-    --color-primary: #2979ff;
-    --color-primary-strong: #1f66e5;
-    --color-primary-soft: #eaf2ff;
-    --color-charcoal: #333333;
-    --color-accent: #ff6d00;
-    --color-accent-strong: #b34a00;
-    --color-accent-soft: #fff1e6;
-    --color-surface: #f5f5f5;
+    /* Azul fiordo (azul de la bandera noruega): identidad, títulos, enlaces, gráficos. */
+    --color-primary: #1d3f8f;
+    --color-primary-strong: #00205b;
+    --color-primary-soft: #e8edf7;
+    /* Rojo bandera: botones de acción, plazas que se acaban, errores (siempre con texto). */
+    --color-accent: #ba0c2f;
+    --color-accent-strong: #9e0a27;
+    --color-accent-soft: #fbe9ec;
+    /* Tinta: texto principal. */
+    --color-ink: #1a2233;
+    /* Bruma de Bergen: fondos secundarios y tarjetas. */
+    --color-surface: #f3f5f8;
+    /* Verde césped: confirmaciones ("You're in!"). */
+    --color-success: #1e8e5a;
+    --color-success-strong: #166b44;
+    --color-success-soft: #e8f5ee;
+    /* Ámbar: lista de espera y avisos. */
+    --color-warning: #f2a900;
+    --color-warning-strong: #8a5a00;
+    --color-warning-soft: #fff6db;
 
     --font-sans: var(--font-albert), ui-sans-serif, system-ui, sans-serif;
     --font-display: var(--font-nova), ui-sans-serif, system-ui, sans-serif;
@@ -25,7 +37,7 @@
     }
 
     body {
-        @apply bg-white font-sans text-charcoal antialiased;
+        @apply bg-white font-sans text-ink antialiased;
     }
 
     h1 {
