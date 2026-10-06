@@ -28,7 +28,7 @@ export default function AdminNav({
                             href={tab.href}
                             aria-current={tab.active ? 'page' : undefined}
                             className={`block rounded-md px-3 py-1.5 whitespace-nowrap ${
-                                tab.active ? 'bg-white shadow-sm' : 'text-charcoal/70 hover:text-charcoal'
+                                tab.active ? 'bg-white shadow-sm' : 'text-ink/70 hover:text-ink'
                             }`}
                         >
                             {tab.label}

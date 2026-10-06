@@ -12,10 +12,10 @@ export default async function NotFound() {
         <section className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
             <p className="font-display text-6xl text-primary">404</p>
             <h1 className="mt-4 text-3xl">{dict.notFound.title}</h1>
-            <p className="mt-3 text-charcoal/70">{dict.notFound.text}</p>
+            <p className="mt-3 text-ink/70">{dict.notFound.text}</p>
             <Link
                 href={`/${locale}`}
-                className="mt-8 rounded-lg bg-primary-strong px-6 py-3 font-semibold text-white transition-colors hover:bg-primary"
+                className="mt-8 rounded-lg bg-accent px-6 py-3 font-semibold text-white transition-colors hover:bg-accent-strong"
             >
                 {dict.notFound.back}
             </Link>

@@ -84,7 +84,7 @@ export default function UserMenu({ locale, dict }: { locale: Locale; dict: Dicti
         return (
             <Link
                 href={loginHref}
-                className="rounded-lg bg-primary-strong px-3 py-2 text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-primary sm:px-4"
+                className="rounded-lg bg-accent px-3 py-2 text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-accent-strong sm:px-4"
             >
                 {dict.signIn}
             </Link>
@@ -108,7 +108,7 @@ export default function UserMenu({ locale, dict }: { locale: Locale; dict: Dicti
             >
                 {initials(user.name)}
             </summary>
-            <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-black/10 bg-white py-1 text-charcoal shadow-lg">
+            <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-black/10 bg-white py-1 text-ink shadow-lg">
                 <p className="truncate border-b border-black/5 px-4 py-2 text-sm font-semibold">
                     {user.name}
                 </p>

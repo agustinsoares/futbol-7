@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Aalto Football">
-<rect x="6" y="6" width="188" height="188" rx="40" fill="#BA0C2F"/><defs><clipPath id="lsc"><path d="M22,166 L100,28 L178,166 L140,166 L100,96 L60,166 Z"/></clipPath></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#BA0C2F"/><g transform="translate(100 100) scale(.66) translate(-100 -96)">
+<defs><clipPath id="mkc"><path d="M22,166 L100,28 L178,166 L140,166 L100,96 L60,166 Z"/></clipPath></defs>
 <path d="M22,166 L100,28 L178,166 L140,166 L100,96 L60,166 Z" fill="#FFFFFF"/>
-<g clip-path="url(#lsc)"><path d="M41,172 L100,67 L159,172" fill="none" stroke="#00205B" stroke-width="24" stroke-linejoin="miter"/></g>
+<g clip-path="url(#mkc)"><path d="M41,172 L100,67 L159,172" fill="none" stroke="#00205B" stroke-width="20" stroke-linejoin="miter"/></g>
 <path d="M60,120 L140,120 L148,140 L52,140 Z" fill="#FFFFFF"/><path d="M64,126 L136,126 L140,134 L60,134 Z" fill="#00205B"/>
-<circle cx="100" cy="152" r="25" fill="#BA0C2F"/><clipPath id="lsb"><circle cx="100" cy="152" r="21"/></clipPath>
+<circle cx="100" cy="152" r="25" fill="#BA0C2F"/><clipPath id="mkb"><circle cx="100" cy="152" r="21"/></clipPath>
 <circle cx="100" cy="152" r="21" fill="#FFFFFF"/>
-<g clip-path="url(#lsb)" fill="#00205B" stroke="#00205B" stroke-width="1.47" stroke-linejoin="round">
+<g clip-path="url(#mkb)" fill="#00205B" stroke="#00205B" stroke-width="1.47" stroke-linejoin="round">
 <path d="M100.00,144.44 L107.19,149.66 L104.44,158.12 L95.56,158.12 L92.81,149.66 Z"/>
 <line x1="100.00" y1="144.44" x2="100.00" y2="136.46"/>
 <path d="M100.00,136.88 L92.81,131.66 L95.56,123.20 L104.44,123.20 L107.19,131.66 Z"/>
@@ -19,4 +19,4 @@
 <path d="M85.62,147.33 L78.43,152.55 L71.24,147.33 L73.99,138.88 L82.87,138.88 Z"/>
 </g>
 <circle cx="100" cy="152" r="20.27" fill="none" stroke="#00205B" stroke-width="1.47"/>
-</svg>
+</g></svg>

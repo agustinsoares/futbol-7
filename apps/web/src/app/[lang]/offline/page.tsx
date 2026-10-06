@@ -20,7 +20,7 @@ export default async function OfflinePage({ params }: PageProps<'/[lang]/offline
     return (
         <section className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
             <h1 className="text-3xl">{dict.offline.title}</h1>
-            <p className="mt-3 text-charcoal/70">{dict.offline.text}</p>
+            <p className="mt-3 text-ink/70">{dict.offline.text}</p>
             <RetryButton label={dict.offline.retry} />
         </section>
     );

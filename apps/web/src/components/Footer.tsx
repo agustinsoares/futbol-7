@@ -9,7 +9,7 @@ export default function Footer({ locale, dict }: { locale: Locale; dict: Diction
 
     return (
         <footer className="bg-surface">
-            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-charcoal/80 sm:flex-row">
+            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-ink/80 sm:flex-row">
                 <Logo locale={locale} label={dict.nav.logoLabel} />
                 <nav aria-label="Legal" className="flex gap-4">
                     <Link href={`/${locale}/privacy`} className="hover:underline">

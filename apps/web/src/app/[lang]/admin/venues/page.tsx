@@ -57,7 +57,7 @@ export default async function AdminVenuesPage({ params }: PageProps<'/[lang]/adm
                         >
                             <div>
                                 <p className="font-semibold">{venue.name}</p>
-                                <p className="text-sm text-charcoal/60">
+                                <p className="text-sm text-ink/60">
                                     {venue.area} · {dict.match.surfaces[venue.surface]} ·{' '}
                                     {interpolate(t.matches[pluralCategory(count, lang)], { count })}
                                 </p>

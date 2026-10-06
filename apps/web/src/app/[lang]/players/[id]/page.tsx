@@ -65,7 +65,7 @@ export default async function PlayerPage({ params }: PageProps<'/[lang]/players/
                 </span>
                 <div>
                     <h1 className="text-3xl sm:text-4xl">{profile.full_name}</h1>
-                    <p className="mt-1 text-charcoal/70">
+                    <p className="mt-1 text-ink/70">
                         {[
                             profile.skill_level && dict.levels[profile.skill_level],
                             profile.preferred_position && dict.profile.positions[profile.preferred_position],
@@ -73,18 +73,16 @@ export default async function PlayerPage({ params }: PageProps<'/[lang]/players/
                             .filter(Boolean)
                             .join(' · ')}
                     </p>
-                    <p className="text-sm text-charcoal/60">
-                        {interpolate(t.memberSince, { date: memberSince })}
-                    </p>
+                    <p className="text-sm text-ink/60">{interpolate(t.memberSince, { date: memberSince })}</p>
                 </div>
             </header>
 
             <dl className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {tiles.map((tile) => (
                     <div key={tile.label} className="rounded-2xl bg-surface p-5">
-                        <dt className="text-sm text-charcoal/60">{tile.label}</dt>
+                        <dt className="text-sm text-ink/60">{tile.label}</dt>
                         <dd className="mt-1 text-2xl font-bold">{tile.value}</dd>
-                        {tile.note && <dd className="text-sm text-charcoal/60">{tile.note}</dd>}
+                        {tile.note && <dd className="text-sm text-ink/60">{tile.note}</dd>}
                     </div>
                 ))}
             </dl>
@@ -99,7 +97,7 @@ export default async function PlayerPage({ params }: PageProps<'/[lang]/players/
                     ))}
                 </ul>
             ) : (
-                <p className="mt-3 text-charcoal/70">{t.noRecent}</p>
+                <p className="mt-3 text-ink/70">{t.noRecent}</p>
             )}
         </section>
     );

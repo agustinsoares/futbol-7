@@ -32,7 +32,7 @@ export default function ChatPanel({
     return (
         <div className="space-y-4">
             {messages.length === 0 ? (
-                <p className="text-sm text-charcoal/60">{dict.empty}</p>
+                <p className="text-sm text-ink/60">{dict.empty}</p>
             ) : (
                 <ol className="max-h-96 space-y-3 overflow-y-auto pr-1" aria-live="polite">
                     {messages.map((message) => {
@@ -44,7 +44,7 @@ export default function ChatPanel({
                                         mine ? 'bg-primary-soft' : 'bg-surface'
                                     }`}
                                 >
-                                    <p className="text-xs text-charcoal/60">
+                                    <p className="text-xs text-ink/60">
                                         <Link
                                             href={`/${locale}/players/${message.userId}`}
                                             className="font-semibold"
@@ -61,7 +61,7 @@ export default function ChatPanel({
                                             <input type="hidden" name="messageId" value={message.id} />
                                             <button
                                                 type="submit"
-                                                className="text-xs text-charcoal/50 hover:text-accent-strong"
+                                                className="text-xs text-ink/50 hover:text-accent-strong"
                                             >
                                                 {dict.delete}
                                             </button>

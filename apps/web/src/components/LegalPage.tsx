@@ -9,18 +9,18 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
     return (
         <article className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
             <h1 className="text-3xl sm:text-4xl">{doc.title}</h1>
-            <p className="mt-2 text-sm text-charcoal/60">{doc.updated}</p>
-            <p className="mt-6 text-lg text-charcoal/85">{fill(doc.intro)}</p>
+            <p className="mt-2 text-sm text-ink/60">{doc.updated}</p>
+            <p className="mt-6 text-lg text-ink/85">{fill(doc.intro)}</p>
             {doc.sections.map((section) => (
                 <section key={section.heading} className="mt-8">
                     <h2 className="text-xl font-bold">{section.heading}</h2>
                     {section.paragraphs?.map((p) => (
-                        <p key={p} className="mt-3 text-charcoal/85">
+                        <p key={p} className="mt-3 text-ink/85">
                             {fill(p)}
                         </p>
                     ))}
                     {section.list && (
-                        <ul className="mt-3 list-disc space-y-2 pl-5 text-charcoal/85">
+                        <ul className="mt-3 list-disc space-y-2 pl-5 text-ink/85">
                             {section.list.map((item) => (
                                 <li key={item}>{fill(item)}</li>
                             ))}

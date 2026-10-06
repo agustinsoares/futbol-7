@@ -4,7 +4,8 @@ export const SITE_NAME = 'Aalto Football';
 export const TIME_ZONE = 'Europe/Oslo';
 export const CURRENCY = 'NOK';
 
-export const BRAND_BLUE = '#2979ff';
+// Azul fiordo (azul de la bandera noruega): color de la barra del navegador y del manifest.
+export const BRAND_BLUE = '#00205b';
 
 export function siteUrl(): URL {
     const explicit = process.env.NEXT_PUBLIC_SITE_URL;

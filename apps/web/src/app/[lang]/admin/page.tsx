@@ -45,9 +45,9 @@ function shortDate(iso: string, locale: Locale) {
 function StatCard({ label, value, hint }: { label: string; value: ReactNode; hint?: string }) {
     return (
         <div className="rounded-xl border border-black/5 bg-white p-5 shadow-sm">
-            <p className="text-sm text-charcoal/60">{label}</p>
+            <p className="text-sm text-ink/60">{label}</p>
             <p className="mt-1 font-display text-3xl">{value}</p>
-            {hint && <p className="mt-1 text-sm text-charcoal/60">{hint}</p>}
+            {hint && <p className="mt-1 text-sm text-ink/60">{hint}</p>}
         </div>
     );
 }
@@ -56,7 +56,7 @@ function Panel({ title, subtitle, children }: { title: string; subtitle?: string
     return (
         <div className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
             <h3 className="font-semibold">{title}</h3>
-            {subtitle && <p className="text-sm text-charcoal/60">{subtitle}</p>}
+            {subtitle && <p className="text-sm text-ink/60">{subtitle}</p>}
             <div className="mt-4">{children}</div>
         </div>
     );
@@ -72,7 +72,7 @@ function BarList({
     empty: string;
     format: (n: number) => string;
 }) {
-    if (rows.length === 0) return <p className="text-sm text-charcoal/60">{empty}</p>;
+    if (rows.length === 0) return <p className="text-sm text-ink/60">{empty}</p>;
     const max = Math.max(...rows.map((r) => r.value), 1);
     return (
         <ul className="space-y-2 text-sm">
@@ -117,10 +117,10 @@ function Columns({
                         aria-hidden="true"
                         className="pointer-events-none absolute inset-x-0 top-0 flex -translate-y-1/2 items-center"
                     >
-                        <span className="w-8 shrink-0 pr-1.5 text-right text-xs text-charcoal/60 tabular-nums">
+                        <span className="w-8 shrink-0 pr-1.5 text-right text-xs text-ink/60 tabular-nums">
                             {format(maxValue)}
                         </span>
-                        <span className="flex-1 border-t border-dashed border-charcoal/50" />
+                        <span className="flex-1 border-t border-dashed border-ink/50" />
                     </div>
                 )}
                 <div className="flex flex-1 items-end gap-1">
@@ -145,7 +145,7 @@ function Columns({
                                 />
                                 <div
                                     role="tooltip"
-                                    className={`pointer-events-none absolute z-20 mb-1.5 rounded-md bg-charcoal px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${align}`}
+                                    className={`pointer-events-none absolute z-20 mb-1.5 rounded-md bg-ink px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${align}`}
                                     style={{ bottom: height }}
                                 >
                                     <span className="block text-sm font-semibold tabular-nums">
@@ -158,7 +158,7 @@ function Columns({
                     })}
                 </div>
             </div>
-            <figcaption className="mt-2 flex justify-between pl-8 text-xs text-charcoal/60">
+            <figcaption className="mt-2 flex justify-between pl-8 text-xs text-ink/60">
                 <span>{rows[0]?.label}</span>
                 <span>{rows.at(-1)?.label}</span>
             </figcaption>
@@ -310,7 +310,7 @@ export default async function AdminOverviewPage({ params }: PageProps<'/[lang]/a
             )}
 
             <h2 className="mt-12 text-2xl">{t.traffic}</h2>
-            <p className="mt-1 text-charcoal/70">{t.trafficSubtitle}</p>
+            <p className="mt-1 text-ink/70">{t.trafficSubtitle}</p>
             <div className="mt-4">
                 <TrafficSection locale={lang} t={t} />
             </div>

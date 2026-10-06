@@ -29,11 +29,19 @@ interface MatchCardProps {
     dict: Pick<Dictionary, 'matchCard' | 'levels' | 'match'>;
     /** Etiqueta opcional arriba a la derecha (p. ej. "Host" o "Waitlist" en Mis partidos). */
     badge?: string;
+    /** Color de la etiqueta: confirmado en verde, lista de espera en ámbar, el resto en azul. */
+    badgeTone?: 'brand' | 'success' | 'warning';
 }
+
+const BADGE_TONES = {
+    brand: 'bg-primary-strong text-white',
+    success: 'bg-success-soft text-success-strong',
+    warning: 'bg-warning-soft text-warning-strong',
+};
 
 const FEW_SPOTS_THRESHOLD = 2;
 
-export default function MatchCard({ match, locale, dict, badge }: MatchCardProps) {
+export default function MatchCard({ match, locale, dict, badge, badgeTone = 'brand' }: MatchCardProps) {
     const t = dict.matchCard;
     const { venue, area, startsAt, format, level, spotsTotal, spotsTaken, pricePerPlayer } = match;
     const isExample = match.id.startsWith('example-');
@@ -57,14 +65,16 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
                     <h3 className="mt-1 text-lg font-semibold group-hover:text-primary-strong">
                         {match.title ?? venue}
                     </h3>
-                    <p className="text-sm text-charcoal/70">{match.title ? `${venue} · ${area}` : area}</p>
+                    <p className="text-sm text-ink/70">{match.title ? `${venue} · ${area}` : area}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                     <span className="rounded-md bg-primary-soft px-2 py-1 text-xs font-semibold text-primary-strong">
                         {format}
                     </span>
                     {badge && (
-                        <span className="rounded-md bg-charcoal px-2 py-1 text-xs font-semibold text-white">
+                        <span
+                            className={`rounded-md px-2 py-1 text-xs font-semibold ${BADGE_TONES[badgeTone]}`}
+                        >
                             {badge}
                         </span>
                     )}
@@ -73,12 +83,12 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
 
             <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
                 <div>
-                    <dt className="text-charcoal/60">{t.level}</dt>
+                    <dt className="text-ink/60">{t.level}</dt>
                     <dd className="font-medium">{dict.levels[level]}</dd>
                 </div>
                 {pricePerPlayer != null && (
                     <div>
-                        <dt className="text-charcoal/60">{t.price}</dt>
+                        <dt className="text-ink/60">{t.price}</dt>
                         <dd className="font-medium">
                             {formatPrice(pricePerPlayer, locale)} {t.perPlayer}
                         </dd>
@@ -96,7 +106,7 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
                     aria-valuenow={spotsTaken}
                 >
                     <div
-                        className={`h-full rounded-full ${isFull ? 'bg-charcoal/40' : 'bg-primary'}`}
+                        className={`h-full rounded-full ${isFull ? 'bg-ink/40' : 'bg-primary'}`}
                         style={{ width: `${filledPercent}%` }}
                     />
                 </div>
@@ -104,9 +114,9 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
                     {isCancelled ? (
                         <span className="font-semibold text-accent-strong">{dict.match.cancelledNotice}</span>
                     ) : match.status === 'completed' ? (
-                        <span className="font-medium text-charcoal/70">{dict.match.completedNotice}</span>
+                        <span className="font-medium text-ink/70">{dict.match.completedNotice}</span>
                     ) : isFull ? (
-                        <span className="font-medium text-charcoal/70">{t.full}</span>
+                        <span className="font-medium text-ink/70">{t.full}</span>
                     ) : (
                         <>
                             <span className="font-semibold">
@@ -114,7 +124,7 @@ export default function MatchCard({ match, locale, dict, badge }: MatchCardProps
                                     count: spotsLeft,
                                 })}
                             </span>{' '}
-                            <span className="text-charcoal/60">
+                            <span className="text-ink/60">
                                 {interpolate(t.ofTotal, { total: spotsTotal })}
                             </span>
                             {fewSpots && (

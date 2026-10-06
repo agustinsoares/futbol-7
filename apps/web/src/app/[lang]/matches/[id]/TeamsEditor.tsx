@@ -72,13 +72,13 @@ export default function TeamsEditor({ locale, matchId, players, dict }: TeamsEdi
 
             {hasTeams && (
                 <>
-                    <p className="text-sm text-charcoal/70">{dict.hint}</p>
+                    <p className="text-sm text-ink/70">{dict.hint}</p>
                     <div className="grid gap-4 sm:grid-cols-2">
                         {(['a', 'b'] as const).map((key) => (
                             <div key={key} className="rounded-xl bg-surface p-4">
                                 <p className="flex justify-between font-semibold">
                                     {key === 'a' ? dict.teamA : dict.teamB}
-                                    <span className="text-sm font-medium text-charcoal/60">
+                                    <span className="text-sm font-medium text-ink/60">
                                         {interpolateStrength(dict.strength, strength(teams[key]))}
                                     </span>
                                 </p>

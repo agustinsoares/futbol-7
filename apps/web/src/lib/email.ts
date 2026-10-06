@@ -1,4 +1,5 @@
 import 'server-only';
+import { siteUrl } from './site';
 
 export interface Email {
     to: string;
@@ -54,7 +55,7 @@ export function renderEmailHtml({ lang, heading, paragraphs, button, note, tagli
     const p = (text: string) =>
         `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;">${escapeHtml(text)}</p>`;
     const cta = button
-        ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;"><tr><td style="border-radius:8px;background:#2979ff;">` +
+        ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;"><tr><td style="border-radius:8px;background:#ba0c2f;">` +
           `<a href="${escapeHtml(button.url)}" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:8px;">${escapeHtml(button.label)}</a>` +
           `</td></tr></table>`
         : '';
@@ -64,17 +65,17 @@ export function renderEmailHtml({ lang, heading, paragraphs, button, note, tagli
     return `<!doctype html>
 <html lang="${escapeHtml(lang)}">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Aalto Football</title></head>
-<body style="margin:0;padding:0;background:#f5f5f5;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;"><tr><td align="center" style="padding:32px 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#333333;">
-<tr><td style="background:#333333;padding:20px 32px;border-bottom:4px solid #ff6d00;"><span style="font-size:20px;font-weight:bold;letter-spacing:2px;color:#ffffff;"><span style="color:#2979ff;">AALTO</span> FOOTBALL</span></td></tr>
+<body style="margin:0;padding:0;background:#f3f5f8;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f5f8;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#1a2233;">
+<tr><td style="background:#00205b;padding:18px 32px;border-bottom:4px solid #ba0c2f;"><img src="${escapeHtml(siteUrl().origin)}/icons/icon-192.png" width="36" height="36" alt="" style="vertical-align:middle;border:0;margin-right:10px;"><span style="vertical-align:middle;font-size:20px;font-weight:bold;letter-spacing:2px;color:#ffffff;">AALTO <span style="color:#c9d3ea;">FOOTBALL</span></span></td></tr>
 <tr><td style="padding:32px;">
-<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#333333;">${escapeHtml(heading)}</h1>
+<h1 style="margin:0 0 16px;font-size:24px;line-height:1.3;color:#1a2233;">${escapeHtml(heading)}</h1>
 ${paragraphs.map(p).join('\n')}
 ${cta}
 ${small}
 </td></tr>
-<tr><td style="padding:20px 32px;background:#f5f5f5;font-size:12px;line-height:1.5;color:#888888;">Aalto Football · ${escapeHtml(tagline)}</td></tr>
+<tr><td style="padding:20px 32px;background:#f3f5f8;font-size:12px;line-height:1.5;color:#888888;">Aalto Football · ${escapeHtml(tagline)}</td></tr>
 </table>
 </td></tr></table>
 </body>
