@@ -4,7 +4,7 @@ Fútbol para todos en Bergen. La marca tiene que hacer tres cosas: **dar confian
 
 ## 1. Logo: Fjell-A
 
-<img src="../apps/web/public/brand/logo.svg" width="120" alt="Logo de Aalto Football">
+![Versiones del logo Fjell-A en distintos tamaños](brand/logo-versiones.png)
 
 **La idea.** La **A** de Aalto es una **montaña** (*fjell*): Bergen es "la ciudad entre las siete montañas" y Noruega es montaña y fiordo. La A se dibuja como la **cruz de la bandera noruega**, blanca por fuera y azul por dentro, y el **balón** está en la base, donde se juega. Es noruega sin copiar la bandera, y es fútbol sin necesitar texto.
 
@@ -20,12 +20,17 @@ Fútbol para todos en Bergen. La marca tiene que hacer tres cosas: **dar confian
 | `logo-512.png` | Para redes sociales o donde no se pueda usar SVG |
 
 **Cómo usarlo**
+
+![El logo con el nombre, sobre azul fiordo y sobre fondo claro](brand/logo-con-nombre.png)
+
 - Junto al nombre: el logo a la izquierda y **AALTO FOOTBALL** en *Nova Square*. Sobre fondo azul, "AALTO" en blanco y "FOOTBALL" en blanco al 75 %; sobre fondo claro, "AALTO" en azul fiordo y "FOOTBALL" en tinta al 70 %.
 - Espacio libre alrededor: como mínimo, el ancho del balón.
 - Tamaño mínimo: 16 px, siempre con `logo-small.svg`.
 - No hacer: cambiarle los colores, rotarlo, ponerle sombras o contornos, ni apoyarlo sobre fondos rojos (se pierde el borde).
 
 ## 2. Paleta de colores
+
+![Paleta de colores de Aalto Football](brand/paleta.png)
 
 **Regla 60-30-10:** 60 % de base neutra, 30 % de azul de marca y 10 % de rojo de acción. El rojo funciona porque es escaso: si todo es rojo, nada destaca.
 
@@ -54,6 +59,12 @@ Fútbol para todos en Bergen. La marca tiene que hacer tres cosas: **dar confian
 - El rojo también marca errores. Por eso los errores siempre llevan **ícono y texto**: nunca se comunica algo solo con color.
 - Estados de un partido: confirmado en **verde**, lista de espera en **ámbar**, organizador en **azul**, cancelado en **rojo**.
 - No usar el azul eléctrico ni el naranja anteriores (`#2979FF`, `#FF6D00`).
+
+**Así se ve en la web**
+
+![Home: cabecera azul fiordo, logo y botones de acción en rojo](brand/web-home.png)
+
+![Mis partidos: etiquetas verde (voy), ámbar (lista de espera) y azul (organizo)](brand/web-mis-partidos.png)
 
 ## 3. Tipografía
 
