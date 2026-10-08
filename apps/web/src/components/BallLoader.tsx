@@ -1,9 +1,9 @@
 import SoccerBall from './SoccerBall';
 
-/** Pelota que rebota y gira mientras carga una página. */
-export default function BallLoader({ label }: { label: string }) {
+/** Pelota que rebota y gira mientras algo carga. */
+export default function BallLoader({ label, className = '' }: { label: string; className?: string }) {
     return (
-        <div role="status" className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
+        <div role="status" className={`flex flex-col items-center justify-center gap-3 ${className}`}>
             <div className="ball-bounce">
                 <SoccerBall className="ball-spin h-12 w-12 drop-shadow" />
             </div>
