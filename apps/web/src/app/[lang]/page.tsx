@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { ComponentType, SVGProps } from 'react';
+import FreeKick from '@/components/FreeKick';
 import MatchCard from '@/components/MatchCard';
 import { Alert } from '@/components/ui';
 import {
@@ -62,7 +63,7 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                 />
                 <div className="absolute inset-0 -z-10 bg-linear-to-r from-black/80 via-black/60 to-black/20" />
                 <div className="mx-auto max-w-6xl px-4 py-24 sm:py-32">
-                    <div className="max-w-xl text-white">
+                    <div className="hero-intro max-w-xl text-white">
                         <h1 className="text-4xl leading-tight sm:text-5xl">
                             <span className="underline decoration-accent decoration-4 underline-offset-8">
                                 {dict.hero.titleStart}
@@ -91,9 +92,11 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
             {/* How it works */}
             <section id="how-it-works" className="scroll-mt-16 py-16 sm:py-20">
                 <div className="mx-auto max-w-6xl px-4">
-                    <h2 className="text-3xl font-bold">{dict.howItWorks.title}</h2>
-                    <p className="mt-2 text-ink/70">{dict.howItWorks.subtitle}</p>
-                    <ol className="mt-10 grid gap-8 md:grid-cols-3">
+                    <div className="reveal">
+                        <h2 className="text-3xl font-bold">{dict.howItWorks.title}</h2>
+                        <p className="mt-2 text-ink/70">{dict.howItWorks.subtitle}</p>
+                    </div>
+                    <ol className="reveal-children mt-10 grid gap-8 md:grid-cols-3">
                         {dict.howItWorks.steps.map((step, index) => (
                             <li key={step.title} className="flex gap-4">
                                 <FeatureIcon icon={STEP_ICONS[index]} />
@@ -109,10 +112,12 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                 </div>
             </section>
 
+            <FreeKick {...dict.freeKick} />
+
             {/* Matches */}
             <section id="matches" className="scroll-mt-16 bg-surface py-16 sm:py-20">
                 <div className="mx-auto max-w-6xl px-4">
-                    <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div className="reveal flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <h2 className="text-3xl font-bold">{dict.matches.title}</h2>
                             {isExample && <p className="mt-2 text-ink/70">{dict.matches.subtitle}</p>}
@@ -124,7 +129,7 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                             </p>
                         )}
                     </div>
-                    <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="reveal-children mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {matches.map((match) => (
                             <MatchCard key={match.id} match={match} locale={lang} dict={dict} />
                         ))}
@@ -145,15 +150,15 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
             {/* Hosts */}
             <section id="hosts" className="scroll-mt-16 py-16 sm:py-20">
                 <div className="mx-auto max-w-6xl px-4">
-                    <div className="max-w-2xl">
+                    <div className="reveal max-w-2xl">
                         <h2 className="text-3xl font-bold">{dict.hosts.title}</h2>
                         <p className="mt-2 text-ink/70">{dict.hosts.subtitle}</p>
                     </div>
-                    <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <ul className="reveal-children mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         {dict.hosts.features.map((feature, index) => (
                             <li
                                 key={feature.title}
-                                className="rounded-xl border border-black/5 bg-white p-6 shadow-sm"
+                                className="rounded-xl border border-black/5 bg-white p-6 shadow-sm transition-[box-shadow,translate] duration-300 hover:-translate-y-1 hover:shadow-md motion-reduce:hover:translate-y-0"
                             >
                                 <FeatureIcon icon={HOST_ICONS[index]} />
                                 <h3 className="mt-4 font-semibold">{feature.title}</h3>
@@ -161,7 +166,7 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                             </li>
                         ))}
                     </ul>
-                    <div className="mt-12 rounded-2xl bg-primary-strong px-6 py-10 text-center text-white sm:px-12">
+                    <div className="reveal mt-12 rounded-2xl bg-primary-strong px-6 py-10 text-center text-white sm:px-12">
                         <p className="font-display text-2xl sm:text-3xl">{dict.hosts.bannerTitle}</p>
                         <p className="mx-auto mt-3 max-w-xl text-white/85">{dict.hosts.bannerText}</p>
                         <Link

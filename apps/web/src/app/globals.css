@@ -120,3 +120,113 @@
         margin-top: 0.5rem;
     }
 }
+
+/*
+ * Animaciones del sitio. Todas se apagan con "reducir movimiento" del sistema.
+ * - .hero-intro: los hijos del hero entran escalonados al cargar.
+ * - .reveal / .reveal-children: aparecen al entrar en pantalla (scroll-driven, sin JS);
+ *   en navegadores sin animation-timeline se ven directamente.
+ * - .bar-fill: la barra de plazas se llena al cargar.
+ * - .ball-spin / .ball-bounce / .ball-shadow: pelota de las pantallas de carga.
+ */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes bar-fill {
+    from {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes ball-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ball-bounce {
+    0%,
+    100% {
+        transform: translateY(-28px);
+        animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0);
+    }
+    50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0.33, 1, 0.66, 1);
+    }
+}
+
+@keyframes ball-shadow {
+    0%,
+    100% {
+        transform: scaleX(0.6);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+@layer components {
+    .hero-intro > * {
+        animation: fade-up 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .hero-intro > :nth-child(2) {
+        animation-delay: 150ms;
+    }
+
+    .hero-intro > :nth-child(3) {
+        animation-delay: 300ms;
+    }
+
+    @supports (animation-timeline: view()) {
+        .reveal,
+        .reveal-children > * {
+            animation: fade-up linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 70%;
+        }
+    }
+
+    .bar-fill {
+        transform-origin: left;
+        animation: bar-fill 900ms 200ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .ball-spin {
+        animation: ball-spin 1.2s linear infinite;
+    }
+
+    .ball-bounce {
+        animation: ball-bounce 0.8s infinite;
+    }
+
+    .ball-shadow {
+        animation: ball-shadow 0.8s infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-intro > *,
+        .reveal,
+        .reveal-children > *,
+        .bar-fill,
+        .ball-bounce,
+        .ball-shadow {
+            animation: none;
+        }
+
+        .ball-spin {
+            animation-duration: 4s;
+        }
+    }
+}

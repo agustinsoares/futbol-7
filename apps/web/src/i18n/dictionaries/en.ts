@@ -21,6 +21,12 @@ const en = {
         ctaFind: 'Find matches',
         ctaHost: 'Host a match',
     },
+    freeKick: {
+        title: 'Every match starts with a kick',
+        caption: 'Scroll to take the free kick.',
+        goal: 'GOAL!',
+        sceneLabel: 'Animation: a player curls a free kick over the wall into the top corner.',
+    },
     howItWorks: {
         title: 'How it works',
         subtitle: 'Three steps between you and the pitch.',
