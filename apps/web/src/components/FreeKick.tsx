@@ -100,7 +100,7 @@ export default function FreeKick({ title, caption, goal, sceneLabel }: FreeKickP
     return (
         <section
             ref={sectionRef}
-            className="relative h-[180vh] bg-primary-strong motion-reduce:h-auto sm:h-[230vh]"
+            className="relative h-[180vh] bg-primary-strong motion-reduce:h-auto sm:h-[230vh] sm:motion-reduce:h-auto"
         >
             <div className="sticky top-16 flex h-[calc(100svh-4rem)] flex-col items-center justify-center overflow-hidden px-4 py-8 motion-reduce:static motion-reduce:h-auto">
                 <h2 className="text-center text-3xl font-bold text-white">{title}</h2>
