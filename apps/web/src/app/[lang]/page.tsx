@@ -64,10 +64,10 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                 <div className="mx-auto max-w-6xl px-4 py-24 sm:py-32">
                     <div className="max-w-xl text-white">
                         <h1 className="text-4xl leading-tight sm:text-5xl">
-                            {dict.hero.titleStart}{' '}
                             <span className="underline decoration-accent decoration-4 underline-offset-8">
-                                {dict.hero.titleEnd}
+                                {dict.hero.titleStart}
                             </span>
+                            <span className="block text-[0.82em]">{dict.hero.titleEnd}</span>
                         </h1>
                         <p className="mt-5 text-lg text-white/85">{dict.hero.subtitle}</p>
                         <div className="mt-8 flex flex-wrap gap-3">
