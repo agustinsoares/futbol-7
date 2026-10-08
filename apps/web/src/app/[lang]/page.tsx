@@ -66,8 +66,8 @@ export default async function HomePage({ params, searchParams }: PageProps<'/[la
                         <h1 className="text-4xl leading-tight sm:text-5xl">
                             <span className="underline decoration-accent decoration-4 underline-offset-8">
                                 {dict.hero.titleStart}
-                            </span>{' '}
-                            <span className="text-[0.82em]">{dict.hero.titleEnd}</span>
+                            </span>
+                            <span className="block text-[0.82em]">{dict.hero.titleEnd}</span>
                         </h1>
                         <p className="mt-5 text-lg text-white/85">{dict.hero.subtitle}</p>
                         <div className="mt-8 flex flex-wrap gap-3">
