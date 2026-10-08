@@ -53,8 +53,10 @@ export default function MatchCard({ match, locale, dict, badge, badgeTone = 'bra
 
     const card = (
         <article
-            className={`flex h-full flex-col rounded-xl border border-black/5 bg-white p-5 shadow-sm transition-shadow ${
-                isExample ? '' : 'group-hover:shadow-md group-focus-visible:shadow-md'
+            className={`flex h-full flex-col rounded-xl border border-black/5 bg-white p-5 shadow-sm transition-[box-shadow,translate] duration-300 ${
+                isExample
+                    ? ''
+                    : 'group-hover:-translate-y-1 group-hover:shadow-md group-focus-visible:shadow-md motion-reduce:group-hover:translate-y-0'
             } ${isCancelled ? 'opacity-70' : ''}`}
         >
             <div className="flex items-start justify-between gap-3">
@@ -106,7 +108,7 @@ export default function MatchCard({ match, locale, dict, badge, badgeTone = 'bra
                     aria-valuenow={spotsTaken}
                 >
                     <div
-                        className={`h-full rounded-full ${isFull ? 'bg-ink/40' : 'bg-primary'}`}
+                        className={`bar-fill h-full rounded-full ${isFull ? 'bg-ink/40' : 'bg-primary'}`}
                         style={{ width: `${filledPercent}%` }}
                     />
                 </div>
